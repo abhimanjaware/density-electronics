@@ -1,7 +1,8 @@
 import { 
   ShieldCheck, Zap, Headphones, Truck, FileText, Building2, 
   Target, Eye, Gem, Rocket, Cpu, Users, Phone, Quote, 
-  CheckCircle2, BarChart, Globe, Microscope, Microchip
+  CheckCircle2, BarChart, Globe, Microscope, Microchip,
+  ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -52,60 +53,96 @@ export default function About() {
         </div>
       </div>
 
-      {/* 2. THE FOUNDER's DESK (Special Image & Expanded Bio) */}
+      {/* 2. EXECUTIVE LEADERSHIP TEAM (New B2B Corporate Layout) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="bg-[#1e293b] rounded-xl border-4 border-gray-200 shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+        <div className="text-center mb-16">
+          <span className="text-orange-600 font-black text-xs tracking-[0.2em] uppercase mb-3 block">The Minds Behind The Mission</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1e293b] tracking-tighter uppercase">Executive Leadership</h2>
+          <p className="text-gray-600 text-base font-medium mt-4 max-w-2xl mx-auto leading-relaxed">
+            Our core team brings decades of combined experience in Artificial Intelligence, Supply Chain Logistics, and Enterprise Hardware Architecture.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           
-          {/* Founder Special Image Wrapper */}
-          <div className="w-full lg:w-2/5 relative border-b-4 lg:border-b-0 lg:border-r-4 border-gray-200 bg-gray-900 group">
-            {/* REPLACE THIS SRC WITH MILIN'S ACTUAL PHOTO URL */}
-            <img 
-              src="src\assets\file_0000000063788206b01466a1f3e65ade.png" 
-              alt="Milin Ashok Mahajan - Founder & CEO" 
-              className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 min-h-[500px]" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent"></div>
-            
-            <div className="absolute bottom-8 left-8 right-8">
-              <span className="bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg mb-3 inline-block">
-                Founder & CEO
-              </span>
-              <h2 className="text-4xl font-black text-white uppercase tracking-tight leading-none mb-2 text-shadow-md">
-                Milin Ashok <br/> Mahajan
-              </h2>
+          {/* 1. Founder */}
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col">
+            <div className="h-[320px] w-full overflow-hidden relative bg-gray-100">
+              <img 
+                src="src\assets\file_0000000063788206b01466a1f3e65ade.png" 
+                alt="Milin Ashok Mahajan" 
+                className="w-full h-full object-cover object-top filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                 <a href="#" className="bg-[#0A66C2] p-2.5 rounded hover:bg-white hover:text-[#0A66C2] text-white transition-colors" title="Connect on LinkedIn">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                 </a>
+              </div>
+            </div>
+            <div className="p-8 border-t-4 border-orange-500 flex-1 flex flex-col relative">
+              <Quote size={40} className="absolute top-6 right-6 text-gray-100 pointer-events-none" />
+              <span className="text-orange-600 font-black text-[10px] tracking-widest uppercase mb-1">Founder</span>
+              <h3 className="text-2xl font-black text-[#1e293b] uppercase tracking-tight mb-3">Milin A. Mahajan</h3>
+              <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6 flex-1 relative z-10">
+                Specializing in AIML, Milin founded Density with a vision to eliminate procurement friction and build a smarter, algorithmic supply chain for the hardware sector.
+              </p>
+              <a href="#" className="text-[#1e293b] font-bold text-xs uppercase tracking-wider hover:text-orange-600 transition-colors flex items-center gap-2 w-fit">
+                 Connect <ArrowRight size={14} />
+              </a>
             </div>
           </div>
 
-          {/* Founder Information Density */}
-          <div className="w-full lg:w-3/5 p-10 lg:p-14 relative bg-white">
-            <Quote size={80} className="absolute top-8 right-8 text-gray-100 pointer-events-none" />
-            
-            <h3 className="text-2xl font-black text-[#1e293b] uppercase tracking-tight border-b-4 border-orange-500 inline-block pb-2 mb-6">
-              A Message From The Desk
-            </h3>
-            
-            <div className="space-y-5 text-gray-600 font-medium leading-relaxed">
-              <p>
-                "With a specialized background in <strong className="text-[#1e293b]">Artificial Intelligence and Machine Learning (AIML)</strong>, I saw a profound disconnect in how hardware was being supplied to the innovators building our future. The vision for Density Electronics was clear: combine modern technology with e-commerce to create a smarter, simpler, and absolutely reliable procurement pipeline."
-              </p>
-              <p>
-                We understand that today's engineers expect more than just a cardboard box of components. They require traceability, robust quality control, transparent bulk pricing, and an agile supply chain that adapts to their production runs. 
-              </p>
-              <p>
-                Our long-term commitment is to bridge the gap between intelligent software algorithms and physical hardware distribution. We are continuously exploring technology-driven solutions to optimize inventory prediction, reduce lead times, and deliver genuine value to every institutional and solo partner we serve.
-              </p>
-            </div>
-
-            <div className="mt-10 pt-8 border-t-2 border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Direct Enterprise Contact</p>
-                <a href="tel:+917499175707" className="flex items-center gap-3 text-[#1e293b] font-black text-xl hover:text-orange-600 transition-colors">
-                  <Phone size={24} className="text-orange-500" /> +91 7499175707
-                </a>
+          {/* 2. CEO (Staggered Layout) */}
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col mt-0 lg:mt-8">
+            <div className="h-[320px] w-full overflow-hidden relative bg-gray-100">
+              <img 
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800" 
+                alt="Co-Founder Placeholder" 
+                className="w-full h-full object-cover object-center filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                 <a href="#" className="bg-[#0A66C2] p-2.5 rounded hover:bg-white hover:text-[#0A66C2] text-white transition-colors" title="Connect on LinkedIn">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                 </a>
               </div>
-              <Link to="/sell" className="w-full sm:w-auto bg-[#1e293b] hover:bg-orange-600 text-white px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors text-center rounded-sm">
-                Connect on WhatsApp
-              </Link>
+            </div>
+            <div className="p-8 border-t-4 border-[#1e293b] flex-1 flex flex-col relative">
+              <Quote size={40} className="absolute top-6 right-6 text-gray-100 pointer-events-none" />
+              <span className="text-gray-500 font-black text-[10px] tracking-widest uppercase mb-1">CEO</span>
+              <h3 className="text-2xl font-black text-[#1e293b] uppercase tracking-tight mb-3">Sarah Jenkins</h3>
+              <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6 flex-1 relative z-10">
+                With 15 years in global electronics logistics, Sarah manages the strict SLA requirements, vendor relationships, and enterprise infrastructure that powers Density.
+              </p>
+              <a href="#" className="text-[#1e293b] font-bold text-xs uppercase tracking-wider hover:text-orange-600 transition-colors flex items-center gap-2 w-fit">
+                 Connect <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+
+          {/* 3. CTO Placeholder (Staggered Layout) */}
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col mt-0 lg:mt-16">
+            <div className="h-[320px] w-full overflow-hidden relative bg-gray-100">
+              <img 
+                src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800" 
+                alt="CTO Placeholder" 
+                className="w-full h-full object-cover object-top filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                 <a href="#" className="bg-[#0A66C2] p-2.5 rounded hover:bg-white hover:text-[#0A66C2] text-white transition-colors" title="Connect on LinkedIn">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                 </a>
+              </div>
+            </div>
+            <div className="p-8 border-t-4 border-[#1e293b] flex-1 flex flex-col relative">
+              <Quote size={40} className="absolute top-6 right-6 text-gray-100 pointer-events-none" />
+              <span className="text-gray-500 font-black text-[10px] tracking-widest uppercase mb-1">Chief Technology Officer</span>
+              <h3 className="text-2xl font-black text-[#1e293b] uppercase tracking-tight mb-3">David Chen</h3>
+              <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6 flex-1 relative z-10">
+                A former embedded systems lead, David oversees technical compliance, API integrations for OEM clients, and ensures all shipped silicon meets strict datasheet specifications.
+              </p>
+              <a href="#" className="text-[#1e293b] font-bold text-xs uppercase tracking-wider hover:text-orange-600 transition-colors flex items-center gap-2 w-fit">
+                 Connect <ArrowRight size={14} />
+              </a>
             </div>
           </div>
 

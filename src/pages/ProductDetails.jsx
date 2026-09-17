@@ -56,12 +56,12 @@ export default function ProductDetails() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back Button */}
-        {/* <button 
+        <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-500 hover:text-[#2A1B54] text-sm font-bold mb-4 transition-colors cursor-pointer w-fit"
         >
           <ArrowLeft size={16} strokeWidth={2.5} /> Back
-        </button> */}
+        </button>
 
         {/* Breadcrumbs */}
         <div className="text-sm text-gray-600 mb-6 flex items-center flex-wrap gap-2">

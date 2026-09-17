@@ -68,7 +68,7 @@ export default function ProductCard({ product }) {
               <Plus size={18} strokeWidth={2.5} />
             </button>
           ) : (
-            <div className="flex items-center bg-white border border-gray-200 rounded-full h-9 w-24 shadow-sm overflow-hidden">
+            <div className="flex items-center bg-white border border-gray-600 rounded-full h-9 w-24 shadow-sm overflow-hidden">
               <button 
                 onClick={handleDecrement}
                 className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-[#1A1726] hover:bg-gray-50 transition-colors"
