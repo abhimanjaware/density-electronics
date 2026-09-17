@@ -22,16 +22,20 @@ export default function Header() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Live filter matching for Search
+  // Comprehensive Live Filter for all 180 Products
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
-      const query = searchQuery.toLowerCase();
-      const matches = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.category.toLowerCase().includes(query) ||
-          p.specifications?.partNumber?.toLowerCase().includes(query)
-      ).slice(0, 6);
+      const query = searchQuery.toLowerCase().trim();
+      const matches = products.filter((p) => {
+        const nameMatch = p.name?.toLowerCase().includes(query);
+        const categoryMatch = p.category?.toLowerCase().includes(query);
+        const partMatch = p.specifications?.partNumber?.toLowerCase().includes(query);
+        const descMatch = p.shortDescription?.toLowerCase().includes(query);
+        const idMatch = p.id?.toLowerCase().includes(query);
+
+        return nameMatch || categoryMatch || partMatch || descMatch || idMatch;
+      }).slice(0, 8); // Display up to 8 live dropdown suggestions
+
       setSuggestions(matches);
       setShowSuggestions(true);
     } else {
@@ -54,15 +58,15 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change & prevent body scroll
+  // Close mobile menu on route change & safely lock body scroll
   useEffect(() => {
     setIsMobileMenuOpen(false);
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = 'auto'; };
+    return () => { document.body.style.overflow = ''; };
   }, [location.pathname, isMobileMenuOpen]);
 
   const handleSearchSubmit = (e) => {
@@ -94,7 +98,6 @@ export default function Header() {
     }
   };
 
-  // Image fallback handler
   const handleImageError = (e) => {
     e.target.style.display = 'none';
     if (e.target.nextElementSibling) {
@@ -106,26 +109,22 @@ export default function Header() {
     <header className="w-full font-sans sticky top-0 z-50 shadow-2xl">
       
       {/* 1. TOP MAIN HEADER */}
-      <div className="bg-[#050b14] text-white border-b border-gray-800/50 relative z-50">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-4 lg:gap-8">
+      <div className="bg-[#050b14] text-white border-b border-gray-800/50 relative z-40">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-4 lg:gap-8">
           
           {/* Logo Section */}
-          <Link to="/" className="flex items-center flex-shrink-0 z-50">
-            <div className="flex items-center gap-2 sm:gap-3">
-              
-              {/* DEPLOYMENT LOGO: Place a file named 'logo.png' in your 'public' folder */}
+          <Link to="/" className="flex items-center flex-shrink-0 z-40">
+            <div className="flex items-center h-[5vh] gap-2.5 sm:gap-3">
               <img 
-                src="src\assets\headerlogo.png" 
+                src="src/assets/headerlogo33.png" 
                 alt="Density Logo" 
-                className="h-10 w-10 sm:h-12 sm:w-12 object-contain "
+                className="h-9 w-9 sm:h-16 sm:w-16 object-contain"
                 onError={handleImageError}
               />
-              
-        
             </div>
           </Link>
 
-          {/* Desktop Search Bar */}
+          {/* Desktop Search Bar (Searches all 180 products) */}
           <div ref={searchContainerRef} className="flex-1 max-w-2xl relative hidden lg:block">
             <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-full overflow-hidden shadow-inner h-11">
               <input
@@ -133,7 +132,7 @@ export default function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
-                placeholder="Search by Part Number, Keyword or Category..."
+                placeholder="Search all 180 components by Part Number, Keyword or Category..."
                 className="w-full text-[13px] text-gray-900 placeholder-gray-500 focus:outline-none bg-transparent px-5 font-medium h-full"
               />
               <button
@@ -144,7 +143,7 @@ export default function Header() {
               </button>
             </form>
 
-            {/* Desktop Search Suggestions */}
+            {/* Desktop Search Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl z-50 overflow-hidden">
                 {suggestions.map((product) => (
@@ -154,10 +153,13 @@ export default function Header() {
                     className="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-100 last:border-0 text-black transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={product.image} alt={product.name} className="w-10 h-10 object-contain rounded" />
-                      <span className="text-sm font-bold truncate max-w-[250px]">{product.name}</span>
+                      <img src={product.image} alt={product.name} className="w-10 h-10 object-contain rounded bg-gray-50 p-1" />
+                      <div>
+                        <span className="text-sm font-bold block truncate max-w-[320px]">{product.name}</span>
+                        <span className="text-[10px] text-gray-500 font-mono uppercase">P/N: {product.specifications?.partNumber || product.id} | {product.category}</span>
+                      </div>
                     </div>
-                    <span className="font-black text-[#2563eb] text-sm">₹{product.price}</span>
+                    <span className="font-black text-[#2563eb] text-sm shrink-0">₹{product.price.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
@@ -165,20 +167,30 @@ export default function Header() {
           </div>
 
           {/* Right Action Icons & Mobile Toggle */}
-          <div className="flex items-center gap-5 sm:gap-8 flex-shrink-0 text-[13px] font-semibold text-gray-200 z-50">
-            <Link to="/login" className="hidden xl:flex items-center gap-2 hover:text-[#ffb700] transition-colors">
-              <User size={18} />
-              <span>Login / Register</span>
-            </Link>
-            <button className="hidden sm:flex items-center gap-2 hover:text-[#ffb700] transition-colors">
-              <Heart size={18} />
-              <span>Wishlist</span>
-            </button>
+          <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0 text-gray-200 z-40">
+            
+            {/* Desktop Social Icons */}
+            <div className="hidden xl:flex items-center gap-4 text-gray-400">
+              <a href="#" className="hover:text-[#ffb700] transition-colors" title="LinkedIn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              </a>
+              <a href="#" className="hover:text-[#ffb700] transition-colors" title="Twitter/X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+              </a>
+              <a href="#" className="hover:text-[#ffb700] transition-colors" title="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+            </div>
+
+            {/* Divider for Desktop */}
+            <div className="hidden xl:block h-6 w-[1px] bg-gray-700"></div>
+
+            {/* Cart Icon */}
             <Link to="/cart" className="flex items-center gap-2 hover:text-[#ffb700] transition-colors relative group">
-              <ShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline">Cart</span>
+              <ShoppingCart size={22} className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline font-semibold text-[13px]">Cart</span>
               {cartCount > 0 && (
-                <span className="absolute -top-2.5 -right-2 sm:-left-3 bg-[#f59e0b] text-[#050b14] text-[10px] font-black rounded-full h-4 w-4 flex items-center justify-center shadow-sm">
+                <span className="absolute -top-2 -right-2.5 sm:-left-3 bg-[#f59e0b] text-[#050b14] text-[10px] font-black rounded-full h-4 w-4 flex items-center justify-center shadow-sm">
                   {cartCount}
                 </span>
               )}
@@ -186,11 +198,11 @@ export default function Header() {
 
             {/* Mobile Hamburger Button */}
             <button 
-              className="lg:hidden flex items-center justify-center text-white hover:text-[#ffb700] transition-colors p-1"
+              className="lg:hidden flex items-center justify-center text-white hover:text-[#ffb700] transition-colors p-2 -mr-2"
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Open Menu"
             >
-              <Menu size={28} />
+              <Menu size={26} />
             </button>
           </div>
 
@@ -239,67 +251,64 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* 3. BEAUTIFUL MOBILE MENU DRAWER           */}
-      {/* ========================================= */}
-      
-      {/* Background Overlay */}
+      {/* 3. MOBILE MENU DRAWER */}
       <div 
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`} 
+        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] transition-opacity duration-300 lg:hidden ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`} 
         onClick={() => setIsMobileMenuOpen(false)}
+        aria-hidden="true"
       ></div>
 
-      {/* Side Drawer */}
-      <div className={`fixed top-0 right-0 h-full w-[85%] max-w-[360px] bg-[#050b14] border-l border-gray-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed top-0 right-0 h-[100dvh] w-[85%] max-w-[360px] bg-[#050b14] shadow-2xl z-[70] transform transition-transform duration-300 ease-out lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
           <span className="text-white font-black text-lg tracking-wide uppercase">Menu</span>
           <button 
             onClick={() => setIsMobileMenuOpen(false)} 
-            className="text-gray-400 hover:text-white hover:bg-gray-800 p-1.5 rounded-full transition-colors"
+            className="text-gray-400 hover:text-white p-2 -mr-2 rounded-full transition-colors"
+            aria-label="Close Menu"
           >
-            <X size={24} />
+            <X size={26} />
           </button>
         </div>
 
-        {/* Scrollable Drawer Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 hide-scrollbar">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-6 hide-scrollbar">
           
           {/* Mobile Search Bar */}
           <div ref={mobileSearchContainerRef} className="relative w-full mb-8">
-            <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-md overflow-hidden h-12 shadow-inner border border-transparent focus-within:border-[#2563eb] transition-colors">
+            <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-md overflow-hidden h-[46px] shadow-inner border border-transparent focus-within:border-[#2563eb] transition-colors">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
-                placeholder="Search components..."
+                placeholder="Search all 180 components..."
                 className="w-full text-[15px] text-gray-900 placeholder-gray-500 focus:outline-none bg-transparent px-4 font-medium h-full"
               />
-              <button type="submit" className="bg-[#2563eb] text-white px-5 h-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+              <button type="submit" className="bg-[#2563eb] text-white px-5 h-full flex items-center justify-center active:bg-blue-700 transition-colors">
                 <Search size={20} strokeWidth={2.5} />
               </button>
             </form>
 
-            {/* Mobile Search Suggestions (Pushes content down natively) */}
+            {/* Mobile Search Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="relative mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1">
                 {suggestions.map((product) => (
-                  <div key={product.id} onClick={() => handleSelectProduct(product.slug)} className="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-100 last:border-0 text-black">
+                  <div key={product.id} onClick={() => handleSelectProduct(product.slug)} className="px-4 py-3.5 hover:bg-blue-50 active:bg-blue-100 cursor-pointer flex items-center justify-between border-b border-gray-100 last:border-0 text-black">
                     <div className="flex items-center gap-3">
-                      <img src={product.image} alt={product.name} className="w-8 h-8 object-contain rounded" />
-                      <span className="text-[13px] font-bold truncate max-w-[150px]">{product.name}</span>
+                      <img src={product.image} alt={product.name} className="w-8 h-8 object-contain rounded bg-gray-50 p-0.5" />
+                      <div>
+                        <span className="text-[13px] font-bold block truncate max-w-[150px]">{product.name}</span>
+                        <span className="text-[9px] text-gray-500 font-mono">₹{product.price.toFixed(2)}</span>
+                      </div>
                     </div>
-                    <span className="font-black text-[#2563eb] text-[13px]">₹{product.price}</span>
+                    <ChevronRight size={14} className="text-gray-400" />
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Mobile Navigation Links */}
-          <nav className="flex flex-col space-y-1">
+          <nav className="flex flex-col">
             {[
               { name: "Home", path: "/" },
               { name: "All Categories", path: "/categories" },
@@ -313,32 +322,37 @@ export default function Header() {
                 key={idx}
                 to={link.path} 
                 onClick={() => setIsMobileMenuOpen(false)} 
-                className={`flex items-center justify-between py-3 border-b border-gray-800/60 font-bold text-[15px] transition-colors ${link.highlight ? 'text-[#ffb700] hover:text-yellow-400' : 'text-gray-300 hover:text-white'}`}
+                className={`flex items-center justify-between py-4 border-b border-gray-800/60 font-bold text-[16px] transition-colors ${link.highlight ? 'text-[#ffb700]' : 'text-gray-300'}`}
               >
                 {link.name}
-                <ChevronRight size={16} className="text-gray-600" />
+                <ChevronRight size={18} className="text-gray-600" />
               </Link>
             ))}
             
-            {/* Scroll Links */}
-            <button onClick={(e) => handleScrollToSection(e, 'brands')} className="flex items-center justify-between py-3 border-b border-gray-800/60 font-bold text-[15px] text-gray-300 hover:text-white w-full text-left transition-colors">
-              Featured Brands <ChevronRight size={16} className="text-gray-600" />
+            <button onClick={(e) => handleScrollToSection(e, 'brands')} className="flex items-center justify-between py-4 border-b border-gray-800/60 font-bold text-[16px] text-gray-300 w-full text-left transition-colors">
+              Featured Brands <ChevronRight size={18} className="text-gray-600" />
             </button>
-            <button onClick={(e) => handleScrollToSection(e, 'footer')} className="flex items-center justify-between py-3 font-bold text-[15px] text-gray-300 hover:text-white w-full text-left transition-colors">
-              Contact Support <ChevronRight size={16} className="text-gray-600" />
+            <button onClick={(e) => handleScrollToSection(e, 'footer')} className="flex items-center justify-between py-4 font-bold text-[16px] text-gray-300 w-full text-left transition-colors">
+              Contact Support <ChevronRight size={18} className="text-gray-600" />
             </button>
           </nav>
 
         </div>
 
-        {/* Mobile Extra Actions (Sticky at bottom of drawer) */}
-        <div className="bg-[#02050a] p-6 border-t border-gray-800 flex items-center justify-between text-sm font-bold text-gray-300">
-          <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 hover:text-[#ffb700] transition-colors">
-            <User size={20} /> My Account
-          </Link>
-          <button onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 hover:text-[#ffb700] transition-colors">
-            <Heart size={20} /> Wishlist
-          </button>
+        {/* Mobile Extra Actions / Social Bar */}
+        <div className="bg-[#02050a] p-5 pb-8 border-t border-gray-800 flex items-center justify-center gap-6 text-[15px] font-bold text-gray-400">
+          <a href="#" className="hover:text-[#ffb700] transition-colors" title="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+          <a href="#" className="hover:text-[#ffb700] transition-colors" title="Twitter/X">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+          </a>
+          <a href="#" className="hover:text-[#ffb700] transition-colors" title="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.1C2.5 7.1 2.3 5.4 3.1 4.6C4 3.7 5.1 3.7 5.6 3.6C8.8 3.4 12 3.4 12 3.4C12 3.4 15.2 3.4 18.4 3.6C18.9 3.7 20 3.7 20.9 4.6C21.7 5.4 21.5 7.1 21.5 7.1C21.5 7.1 21.7 8.9 21.7 10.7V13.3C21.7 15.1 21.5 16.9 21.5 16.9C21.5 16.9 21.7 18.6 20.9 19.4C20 20.3 18.7 20.3 18.2 20.4C14.7 20.7 12 20.6 12 20.6C12 20.6 8.8 20.6 5.6 20.4C5.1 20.3 4 20.3 3.1 19.4C2.3 18.6 2.5 16.9 2.5 16.9C2.5 16.9 2.3 15.1 2.3 13.3V10.7C2.3 8.9 2.5 7.1 2.5 7.1Z"></path><polygon points="9.75 15.02 15.5 11.97 9.75 8.92 9.75 15.02"></polygon></svg>
+          </a>
+          <a href="#" className="hover:text-[#ffb700] transition-colors" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
         </div>
 
       </div>

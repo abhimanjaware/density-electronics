@@ -12,7 +12,7 @@ import heroBg1 from '../assets/bg2.png';
 import heroBg2 from '../assets/bg1.png';
 import heroBg3 from '../assets/bg3.png';
 
-// 1. FAST NATIVE SCROLL ANIMATION (Reduced duration & translation for maximum speed)
+// 1. FAST NATIVE SCROLL ANIMATION
 const FadeInSection = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setVisible] = useState(false);
   const domRef = useRef();
@@ -27,7 +27,7 @@ const FadeInSection = ({ children, delay = 0, className = "" }) => {
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px -20px 0px" } // Trigger sooner
+      { threshold: 0.05, rootMargin: "0px 0px -20px 0px" } 
     );
 
     if (domRef.current) observer.observe(domRef.current);
@@ -114,8 +114,8 @@ export default function Home() {
     { name: "SONYTEK", logo: "https://sonytech.in/Final%20Logo.png" },
     { name: "ESPRESSIF", logo: "https://www.espressif.com/sites/all/themes/espressif/logo-black.svg" },
     { name: "ARDUINO", logo: "https://www.w3.org/assets/logos/w3c/w3c-no-bars.svg" },
-    { name: "Puya", logo: "https://www.rflambda.com/assets/images/logo.png?v=20260820" },
-    { name: "SIMCom", logo: "https://www.simcom.com/static/images/logo.png" },
+    { name: "Puya", logo: "https://static.wixstatic.com/media/263487_04b3ef2cd73342dabf6aac9ebf5072dc~mv2.gif" },
+    { name: "SIMCom", logo: "https://www.thebusinessresearchcompany.com/_next/image?url=%2Fimages%2FTBRC%20full%20logo%20transparent.avif&w=256&q=75" },
     { name: "SKYMIRR", logo: "https://skymirr.com/wp-content/uploads/2023/04/skymirr-logo-3d-768x188.png" }
   ];
 
@@ -128,34 +128,34 @@ export default function Home() {
       <div className="bg-white border border-gray-100 hover:border-orange-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-200 ease-out flex flex-col relative group h-full text-left rounded-xl overflow-hidden">
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
           {product.stock > 0 ? (
-            <span className="bg-emerald-50/90 backdrop-blur-sm text-emerald-700 text-[8px] sm:text-[9px] font-bold uppercase px-2 py-0.5 rounded border border-emerald-200 shadow-sm">In Stock</span>
+            <span className="bg-emerald-50/90 backdrop-blur-sm text-emerald-700 text-[9px] font-bold uppercase px-2 py-0.5 rounded border border-emerald-200 shadow-sm">In Stock</span>
           ) : (
-            <span className="bg-red-50/90 backdrop-blur-sm text-red-700 text-[8px] sm:text-[9px] font-bold uppercase px-2 py-0.5 rounded border border-red-200 shadow-sm">Out of Stock</span>
+            <span className="bg-red-50/90 backdrop-blur-sm text-red-700 text-[9px] font-bold uppercase px-2 py-0.5 rounded border border-red-200 shadow-sm">Out of Stock</span>
           )}
         </div>
 
-        <Link to={`/product/${product.slug}`} className="h-32 sm:h-44 w-full p-2 sm:p-4 flex items-center justify-center bg-white border-b border-gray-50 shrink-0 overflow-hidden relative">
+        <Link to={`/product/${product.slug}`} className="h-32 sm:h-44 w-full p-3 sm:p-4 flex items-center justify-center bg-white border-b border-gray-50 shrink-0 overflow-hidden relative">
           <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 ease-out" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200"></div>
         </Link>
 
         <div className="p-3 sm:p-4 flex flex-col flex-grow bg-white">
-          <div className="text-[9px] sm:text-[10px] text-gray-500 font-mono mb-1.5 flex justify-between items-center uppercase">
+          <div className="text-[10px] text-gray-500 font-mono mb-1.5 flex justify-between items-center uppercase">
             <span className="truncate mr-2 hidden sm:inline">P/N: {product.specifications?.partNumber || product.id}</span>
             <span className="text-orange-600 font-bold truncate">{product.category}</span>
           </div>
 
           <Link to={`/product/${product.slug}`}>
-            <h4 className="font-bold text-[11px] sm:text-[13px] text-[#1e293b] group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug mb-3">
+            <h4 className="font-bold text-[12px] sm:text-[13px] text-[#1e293b] group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug mb-3">
               {product.name}
             </h4>
           </Link>
 
           <div className="mt-auto border-t border-gray-100 pt-3">
-            <div className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase mb-0.5">Unit Price (Ex. GST)</div>
+            <div className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Unit Price (Ex. GST)</div>
             <div className="flex items-end justify-between mb-3 sm:mb-4">
               <div className="text-base sm:text-xl font-black text-[#1e293b]">₹{product.price.toFixed(2)}</div>
-              <div className="text-[9px] sm:text-[10px] text-gray-500 flex items-center gap-0.5 hidden sm:flex">
+              <div className="text-[10px] text-gray-500 flex items-center gap-0.5 hidden sm:flex">
                 {[...Array(5)].map((_, i) => <Star key={i} size={10} className="text-[#f59e0b] fill-[#f59e0b]" />)}
               </div>
             </div>
@@ -163,18 +163,19 @@ export default function Home() {
             <div className="flex gap-2">
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all cursor-pointer bg-white shrink-0"
+                className="w-11 h-11 sm:w-10 sm:h-10 border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all cursor-pointer bg-white shrink-0"
+                aria-label="Add to wishlist"
               >
-                <Heart size={16} className={`transition-colors duration-200 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
+                <Heart size={18} className={`transition-colors duration-200 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
               </button>
               <button
                 disabled={isOutOfStock}
                 onClick={() => handleAddToCart(product)}
-                className={`flex-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider h-9 sm:h-10 rounded-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center cursor-pointer ${isOutOfStock
+                className={`flex-1 text-[11px] font-bold uppercase tracking-wider h-11 sm:h-10 rounded-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center cursor-pointer ${isOutOfStock
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : isAdded
                     ? 'bg-emerald-500 text-white shadow-emerald-500/30 shadow-lg'
-                    : 'bg-orange-600 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/30 text-white' // Reverted to Orange
+                    : 'bg-orange-600 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/30 text-white' 
                   }`}
               >
                 {isOutOfStock ? "Unavailable" : isAdded ? "Added!" : "Add to Cart"}
@@ -218,14 +219,14 @@ export default function Home() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4000); // Faster slider rotation
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="w-full bg-[#f8fafc] font-sans pb-16 overflow-x-hidden">
 
-      {/* 1. HERO SECTION (Fully Responsive & Left-Aligned) */}
+      {/* 1. HERO SECTION (Proper Mobile Hierarchy) */}
       <section className="relative w-full h-[75vh] sm:h-[70vh] min-h-[500px] flex items-center overflow-hidden bg-[#050b1a]">
         {heroSlides.map((slide, index) => (
           <div
@@ -245,10 +246,10 @@ export default function Home() {
           <div className="absolute w-[600px] h-[3px] bg-gradient-to-r from-transparent via-[#f59e0b]/60 to-[#f59e0b]/60 rotate-[-38deg] bottom-14 right-0 opacity-70"></div>
         </div>
 
-        {/* Adjusted Container for Left Alignment & Responsiveness */}
-        <div className="relative z-20 max-w-[1500px] mx-auto px-5 sm:px-10 lg:px-16 w-full flex flex-col justify-center h-full pt-12 sm:pt-0">
+        {/* Adjusted Container for Proper Mobile Spacing */}
+        <div className="relative z-20 max-w-[1500px] mx-auto px-5 sm:px-10 lg:px-16 w-full flex flex-col justify-center h-full pt-10 sm:pt-0">
           <div className="w-full sm:w-[85%] lg:w-[60%] flex flex-col text-left">
-            <div className="relative w-full min-h-[200px] sm:min-h-[180px] mb-6 sm:mb-8">
+            <div className="relative w-full min-h-[220px] sm:min-h-[200px] mb-6 sm:mb-8">
               {heroSlides.map((slide, index) => (
                 <div
                   key={index}
@@ -257,29 +258,31 @@ export default function Home() {
                     : 'opacity-0 translate-y-4 pointer-events-none'
                     }`}
                 >
-                  <div className="text-emerald-400 text-[9px] sm:text-[11px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center justify-start">
+                  <div className="text-emerald-400 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center justify-start">
                     {slide.eyebrow}
                   </div>
 
-                  <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-white leading-[1.1] tracking-tight mb-3 sm:mb-4 drop-shadow-lg">
-                    {slide.titleLine1}<br />
+                  {/* Refined Mobile Typography - Removed whitespace-nowrap, Adjusted sizing/line-height */}
+                  <h1 className="text-[34px] leading-[1.15] sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 sm:mb-5 drop-shadow-lg">
+                    {slide.titleLine1}<br className="hidden sm:block" />
                     <span className="text-[#ffb700] drop-shadow-md">{slide.titleLine2}</span> <span className="text-[#ffb700] drop-shadow-md">{slide.titleLine3}</span>
                   </h1>
 
-                  <p className="text-gray-300 text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-lg font-medium drop-shadow">
+                  <p className="text-gray-300 text-[14px] sm:text-[15px] lg:text-base leading-relaxed max-w-lg font-medium drop-shadow pr-4 sm:pr-0">
                     {slide.desc}
                   </p>
                 </div>
               ))}
             </div>
 
+            {/* Accessible Mobile Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 relative z-30 w-full sm:w-auto mt-2">
-              <Link to="/shop" className="w-full sm:w-auto justify-center bg-[#ffb700] hover:bg-[#e6a300] text-black px-6 py-3.5 sm:px-8 rounded-full font-black text-[12px] sm:text-[13px] uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(255,183,0,0.3)]">
-                <ShoppingCart size={16} strokeWidth={2.5} /> SHOP NOW <ChevronRight size={14} strokeWidth={3} className="ml-1" />
+              <Link to="/shop" className="w-full sm:w-auto justify-center bg-[#ffb700] hover:bg-[#e6a300] text-black px-6 py-4 sm:px-8 sm:py-3.5 rounded-full font-black text-[13px] sm:text-[14px] uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(255,183,0,0.3)] min-h-[46px]">
+                <ShoppingCart size={18} strokeWidth={2.5} /> SHOP NOW <ChevronRight size={16} strokeWidth={3} className="ml-1" />
               </Link>
-              <Link to="/bulk" className="w-full sm:w-auto justify-center bg-transparent border-2 border-white text-white px-6 py-3.5 sm:px-8 rounded-full font-bold text-[12px] sm:text-[13px] uppercase tracking-wide hover:bg-white hover:text-black transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2">
-                <CloudUpload size={16} strokeWidth={2} /> UPLOAD BOM
-              </Link>
+              {/* <Link to="/bulk" className="w-full sm:w-auto justify-center bg-transparent border-2 border-white text-white px-6 py-4 sm:px-8 sm:py-3.5 rounded-full font-bold text-[13px] sm:text-[14px] uppercase tracking-wide hover:bg-white hover:text-black transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 min-h-[46px]">
+                <CloudUpload size={18} strokeWidth={2} /> UPLOAD BOM
+              </Link> */}
             </div>
           </div>
         </div>
@@ -288,8 +291,8 @@ export default function Home() {
       {/* QUICK STATS STRIP */}
       <FadeInSection delay={0}>
         <div className="bg-white border-b border-gray-200 shadow-sm relative z-20">
-          <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 overflow-x-auto no-scrollbar">
-            <div className="flex items-center justify-between gap-6 sm:gap-8 min-w-max text-[11px] sm:text-[13px] font-bold text-gray-700">
+          <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 overflow-x-auto no-scrollbar">
+            <div className="flex items-center justify-between gap-6 sm:gap-8 min-w-max text-[12px] sm:text-[13px] font-bold text-gray-700">
               <div className="flex items-center gap-2.5 hover:text-orange-500 transition-colors cursor-default group">
                 <Truck size={20} className="text-[#1e293b] group-hover:text-orange-500 transition-colors sm:w-6 sm:h-6" strokeWidth={1.5} />
                 <span className="leading-tight">Fast & Reliable<br className="hidden sm:block" /> Shipping</span>
@@ -315,8 +318,8 @@ export default function Home() {
         </div>
       </FadeInSection>
 
-      {/* 8. FEATURED BRANDS (DUAL INFINITE SCROLL MARQUEE) */}
-      <section id="brands" className="bg-gray-50 border-y border-gray-200 py-10 sm:py-14 overflow-hidden relative">
+      {/* 8. FEATURED BRANDS */}
+      <section id="brands" className="bg-gray-50 border-y border-gray-200 py-12 sm:py-16 overflow-hidden relative">
         <style>{`
           @keyframes slideLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
           @keyframes slideRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
@@ -328,14 +331,14 @@ export default function Home() {
         `}</style>
 
         <FadeInSection>
-          <div className="max-w-[1500px] mx-auto px-6 lg:px-8 mb-6 sm:mb-10 text-center">
+          <div className="max-w-[1500px] mx-auto px-5 lg:px-8 mb-8 sm:mb-10 text-center">
             <span className="text-[#f59e0b] font-black text-[10px] tracking-[0.25em] uppercase mb-2 block">
               Global Supply Network
             </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0b1524] tracking-tight uppercase mb-3">
+            <h2 className="text-[26px] leading-tight sm:text-3xl lg:text-4xl font-black text-[#0b1524] tracking-tight uppercase mb-3">
               Authorized Brands
             </h2>
-            <p className="text-gray-500 sm:text-gray-600 text-xs sm:text-sm font-medium max-w-2xl mx-auto leading-relaxed">
+            <p className="text-gray-500 sm:text-gray-600 text-[13px] sm:text-sm font-medium max-w-2xl mx-auto leading-relaxed px-4">
               Direct sourcing partnerships with industry-leading silicon and hardware manufacturers.
             </p>
           </div>
@@ -350,13 +353,13 @@ export default function Home() {
               {[...brands, ...brands, ...brands, ...brands, ...brands, ...brands].map((brand, idx) => (
                 <div
                   key={`top-${idx}`}
-                  className="flex-shrink-0 flex items-center justify-center w-[120px] sm:w-[200px] h-14 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
+                  className="flex-shrink-0 flex items-center justify-center w-[140px] sm:w-[200px] h-16 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
                 >
                   <img
                     src={brand.logo}
                     alt={brand.name}
                     loading="lazy"
-                    className="max-h-6 sm:max-h-12 max-w-[90px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"
+                    className="max-h-8 sm:max-h-12 max-w-[100px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"
                   />
                 </div>
               ))}
@@ -366,13 +369,13 @@ export default function Home() {
               {[...[...brands].reverse(), ...[...brands].reverse(), ...[...brands].reverse(), ...[...brands].reverse(), ...[...brands].reverse(), ...[...brands].reverse()].map((brand, idx) => (
                 <div
                   key={`bottom-${idx}`}
-                  className="flex-shrink-0 flex items-center justify-center w-[120px] sm:w-[200px] h-14 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
+                  className="flex-shrink-0 flex items-center justify-center w-[140px] sm:w-[200px] h-16 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
                 >
                   <img
                     src={brand.logo}
                     alt={brand.name}
                     loading="lazy"
-                    className="max-h-6 sm:max-h-12 max-w-[90px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"
+                    className="max-h-8 sm:max-h-12 max-w-[100px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"
                   />
                 </div>
               ))}
@@ -382,14 +385,14 @@ export default function Home() {
       </section>
 
       {/* 2. MAXIMIZED CATEGORY DIRECTORY */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <FadeInSection>
-          <div className="mb-5 sm:mb-8 border-b-2 border-gray-200 pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div className="mb-6 sm:mb-8 border-b-2 border-gray-200 pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <h2 className="text-lg sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Component Directory</h2>
-              <p className="text-gray-500 text-xs sm:text-sm font-medium mt-1">Browse our complete, image-indexed inventory of industrial hardware.</p>
+              <h2 className="text-[22px] sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Component Directory</h2>
+              <p className="text-gray-500 text-[13px] sm:text-sm font-medium mt-1">Browse our complete, image-indexed inventory of industrial hardware.</p>
             </div>
-            <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-xs uppercase tracking-wide flex items-center gap-1 group transition-colors">
+            <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-[13px] uppercase tracking-wide flex items-center gap-1 group transition-colors">
               View All Categories <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -400,7 +403,7 @@ export default function Home() {
             <FadeInSection key={idx} delay={idx * 20}>
               <Link
                 to={`/shop?category=${encodeURIComponent(cat)}`}
-                className="group relative h-28 sm:h-40 md:h-48 rounded-xl overflow-hidden border border-gray-100 hover:border-orange-500 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 ease-out block"
+                className="group relative h-32 sm:h-40 md:h-48 rounded-xl overflow-hidden border border-gray-100 hover:border-orange-500 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 ease-out block"
               >
                 <img
                   src={categoryImages[cat] || "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600"}
@@ -410,12 +413,12 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/60 to-transparent group-hover:via-[#0f172a]/80 transition-colors duration-200"></div>
 
-                <div className="relative z-10 h-full p-3 flex flex-col justify-end">
+                <div className="relative z-10 h-full p-3 sm:p-4 flex flex-col justify-end">
                   <h3 className="font-black text-[13px] sm:text-sm text-white uppercase tracking-wide leading-tight mb-1 group-hover:text-orange-400 transition-colors duration-200 shadow-sm">
                     {cat}
                   </h3>
-                  <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-orange-400 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
-                    Explore <ArrowRight size={10} className="hidden sm:inline" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-orange-400 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+                    Explore <ArrowRight size={12} className="hidden sm:inline" />
                   </span>
                 </div>
               </Link>
@@ -425,11 +428,11 @@ export default function Home() {
       </section>
 
       {/* 3. FEATURED PRODUCTS CAROUSEL */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14 overflow-hidden">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 overflow-hidden">
         <FadeInSection>
-          <div className="flex items-center justify-between mb-4 border-b-2 border-gray-200 pb-3">
-            <h2 className="text-lg sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Featured Hardware</h2>
-            <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-xs flex items-center gap-1 uppercase group">
+          <div className="flex items-center justify-between mb-5 border-b-2 border-gray-200 pb-3">
+            <h2 className="text-[22px] sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Featured Hardware</h2>
+            <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-[13px] flex items-center gap-1 uppercase group">
               View Catalog <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -437,24 +440,24 @@ export default function Home() {
 
         <FadeInSection delay={30}>
           <div className="relative flex flex-col lg:flex-row items-stretch border border-gray-200 bg-white shadow-sm rounded-2xl overflow-hidden">
-            <div className="w-full lg:w-[280px] bg-[#1e293b] p-5 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-gray-200 shrink-0 relative overflow-hidden">
+            <div className="w-full lg:w-[280px] bg-[#1e293b] p-6 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-gray-200 shrink-0 relative overflow-hidden">
               <div className="relative z-10">
-                <span className="inline-block text-[9px] font-bold uppercase tracking-widest border border-black text-orange-400 border border-orange-400/30 bg-orange-400/10 px-2.5 py-1 mb-3 rounded-full">Top Rated</span>
-                <h3 className="text-xl sm:text-2xl font-black text-white leading-tight mb-3 uppercase">Enterprise<br />Standards</h3>
-                <p className="text-[11px] sm:text-xs text-gray-400 mb-5 leading-relaxed font-medium">Our most requested components. High accuracy, robust builds, ready for mass production integration.</p>
-                <Link to="/shop" className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 active:scale-95 text-white text-[10px] sm:text-[11px] font-bold uppercase px-5 py-3 rounded-xl transition-all duration-200 w-full shadow-lg shadow-orange-600/20">
-                  Shop Selection <ArrowRight size={12} />
+                <span className="inline-block text-[10px] font-bold uppercase tracking-widest border text-orange-400 border-orange-400/30 bg-orange-400/10 px-2.5 py-1 mb-3 rounded-full">Top Rated</span>
+                <h3 className="text-[22px] sm:text-2xl font-black text-white leading-tight mb-3 uppercase">Enterprise<br />Standards</h3>
+                <p className="text-[13px] sm:text-sm text-gray-400 mb-6 leading-relaxed font-medium">Our most requested components. High accuracy, robust builds, ready for mass production integration.</p>
+                <Link to="/shop" className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 active:scale-95 text-white text-[12px] font-bold uppercase px-5 py-3.5 rounded-xl transition-all duration-200 w-full shadow-lg shadow-orange-600/20">
+                  Shop Selection <ArrowRight size={14} />
                 </Link>
               </div>
               <Cpu size={140} className="absolute -bottom-6 -right-6 text-white opacity-5 pointer-events-none transform rotate-12" />
             </div>
 
             <div className="relative flex-1 overflow-hidden min-w-0 bg-gray-50/50 ">
-              <button onClick={handlePrevSlide} disabled={!canScrollPrev} aria-label="Previous" className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur border border-gray-500 shadow-xl flex items-center justify-center rounded-full transition-all duration-200 ${canScrollPrev ? 'text-[#1e293b] hover:border-orange-500 hover:text-orange-600 hover:scale-105 active:scale-95 cursor-pointer' : 'text-gray-300 cursor-not-allowed opacity-0 scale-90'}`}>
-                <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
+              <button onClick={handlePrevSlide} disabled={!canScrollPrev} aria-label="Previous" className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/90 backdrop-blur border border-gray-500 shadow-xl flex items-center justify-center rounded-full transition-all duration-200 ${canScrollPrev ? 'text-[#1e293b] hover:border-orange-500 hover:text-orange-600 hover:scale-105 active:scale-95 cursor-pointer' : 'text-gray-300 cursor-not-allowed opacity-0 scale-90'}`}>
+                <ChevronLeft size={20} />
               </button>
-              <button onClick={handleNextSlide} disabled={!canScrollNext} aria-label="Next" className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur border border-gray-200 shadow-xl flex items-center justify-center rounded-full transition-all duration-200 ${canScrollNext ? 'text-[#1e293b] hover:border-orange-500 hover:text-orange-600 hover:scale-105 active:scale-95 cursor-pointer' : 'text-gray-300 cursor-not-allowed opacity-0 scale-90'}`}>
-                <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+              <button onClick={handleNextSlide} disabled={!canScrollNext} aria-label="Next" className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/90 backdrop-blur border border-gray-200 shadow-xl flex items-center justify-center rounded-full transition-all duration-200 ${canScrollNext ? 'text-[#1e293b] hover:border-orange-500 hover:text-orange-600 hover:scale-105 active:scale-95 cursor-pointer' : 'text-gray-300 cursor-not-allowed opacity-0 scale-90'}`}>
+                <ChevronRight size={20} />
               </button>
 
               <div className="flex transition-transform duration-300 ease-out h-full" style={{ transform: `translateX(-${carouselIndex * (100 / visibleCount)}%)` }}>
@@ -470,14 +473,14 @@ export default function Home() {
       </section>
 
       {/* 4. NEW ARRIVALS & BEST SELLERS */}
-      <section className="bg-gray-50 border-y border-gray-200 py-10 sm:py-14 shadow-inner">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-14">
+      <section className="bg-gray-50 border-y border-gray-200 py-12 sm:py-16 shadow-inner">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
 
           <div>
             <FadeInSection>
-              <div className="flex items-center justify-between mb-4 border-b-2 border-gray-200 pb-3">
-                <h2 className="text-lg sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">New Arrivals</h2>
-                <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-xs flex items-center gap-1 uppercase group">View All <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" /></Link>
+              <div className="flex items-center justify-between mb-5 border-b-2 border-gray-200 pb-3">
+                <h2 className="text-[22px] sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">New Arrivals</h2>
+                <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-[13px] flex items-center gap-1 uppercase group">View All <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></Link>
               </div>
             </FadeInSection>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
@@ -491,9 +494,9 @@ export default function Home() {
 
           <div>
             <FadeInSection>
-              <div className="flex items-center justify-between mb-4 border-b-2 border-gray-200 pb-3">
-                <h2 className="text-lg sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Best Sellers</h2>
-                <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-xs flex items-center gap-1 uppercase group">View All <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" /></Link>
+              <div className="flex items-center justify-between mb-5 border-b-2 border-gray-200 pb-3">
+                <h2 className="text-[22px] sm:text-2xl font-black text-[#1e293b] tracking-tight uppercase">Best Sellers</h2>
+                <Link to="/shop" className="text-orange-600 hover:text-orange-700 font-bold text-[13px] flex items-center gap-1 uppercase group">View All <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></Link>
               </div>
             </FadeInSection>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
@@ -509,35 +512,35 @@ export default function Home() {
       </section>
 
       {/* 5. WHY CHOOSE US? */}
-      <section id="why-us" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section id="why-us" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <FadeInSection>
-          <div className="text-center mb-8 sm:mb-10">
-            <span className="text-orange-600 font-black text-[9px] sm:text-[10px] tracking-[0.2em] uppercase mb-2 block">Enterprise Infrastructure</span>
-            <h2 className="text-xl sm:text-3xl font-black text-[#1e293b] tracking-tight uppercase">Why Choose Density?</h2>
-            <p className="text-gray-500 sm:text-gray-600 text-[11px] sm:text-sm font-medium mt-2 max-w-2xl mx-auto px-4">We built our logistics and sourcing networks to support everyone from solo makers to massive OEMs scaling up manufacturing lines.</p>
+          <div className="text-center mb-10 sm:mb-12">
+            <span className="text-orange-600 font-black text-[10px] sm:text-[11px] tracking-[0.2em] uppercase mb-3 block">Enterprise Infrastructure</span>
+            <h2 className="text-[26px] leading-tight sm:text-3xl font-black text-[#1e293b] tracking-tight uppercase">Why Choose Density?</h2>
+            <p className="text-gray-500 sm:text-gray-600 text-[13px] sm:text-base font-medium mt-3 max-w-2xl mx-auto px-2">We built our logistics and sourcing networks to support everyone from solo makers to massive OEMs scaling up manufacturing lines.</p>
           </div>
         </FadeInSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[
-            { img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600", icon: <ShieldCheck size={20} />, title: "100% Genuine", desc: "No clones. We source directly from official manufacturers like Espressif and DWIN." },
-            { img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600", icon: <Zap size={20} />, title: "Same-Day Dispatch", desc: "Strict SLA logistics. Orders before 2 PM IST are handed to premium couriers same day." },
-            { img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=600", icon: <Headphones size={20} />, title: "Expert Support", desc: "Our engineering team provides datasheets and hands-on integration support." },
-            { img: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=600", icon: <FileText size={20} />, title: "GST Invoicing", desc: "Seamless procurement for businesses. 18% GST invoices are automatically generated." },
-            { img: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=600", icon: <Truck size={20} />, title: "ESD Packaging", desc: "Strict adherence to anti-static protocols. Sensitive ICs are packed in ESD bags." },
-            { img: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600", icon: <Building2 size={20} />, title: "Institutional POs", desc: "We partner with university labs and government sectors to fulfill large-scale orders." }
+            { img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600", icon: <ShieldCheck size={24} />, title: "100% Genuine", desc: "No clones. We source directly from official manufacturers like Espressif and DWIN." },
+            { img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600", icon: <Zap size={24} />, title: "Same-Day Dispatch", desc: "Strict SLA logistics. Orders before 2 PM IST are handed to premium couriers same day." },
+            { img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=600", icon: <Headphones size={24} />, title: "Expert Support", desc: "Our engineering team provides datasheets and hands-on integration support." },
+            { img: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=600", icon: <FileText size={24} />, title: "GST Invoicing", desc: "Seamless procurement for businesses. 18% GST invoices are automatically generated." },
+            { img: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=600", icon: <Truck size={24} />, title: "ESD Packaging", desc: "Strict adherence to anti-static protocols. Sensitive ICs are packed in ESD bags." },
+            { img: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600", icon: <Building2 size={24} />, title: "Institutional POs", desc: "We partner with university labs and government sectors to fulfill large-scale orders." }
           ].map((feature, idx) => (
             <FadeInSection key={idx} delay={idx * 30}>
-              <div className="group relative h-[200px] sm:h-[240px] rounded-2xl overflow-hidden border border-gray-100 hover:border-orange-500 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 ease-out">
+              <div className="group relative h-[220px] sm:h-[260px] rounded-2xl overflow-hidden border border-gray-100 hover:border-orange-500 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 ease-out">
                 <img src={feature.img} alt={feature.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/70 to-[#0f172a]/20 group-hover:via-[#0f172a]/80 transition-colors duration-200"></div>
 
-                <div className="relative z-10 p-4 sm:p-5 h-full flex flex-col justify-end">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center mb-2 backdrop-blur-md border border-orange-500/30 shadow-sm transform group-hover:scale-105 transition-transform duration-200">
+                <div className="relative z-10 p-5 sm:p-6 h-full flex flex-col justify-end">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center mb-3 backdrop-blur-md border border-orange-500/30 shadow-sm transform group-hover:scale-105 transition-transform duration-200">
                     {feature.icon}
                   </div>
-                  <h3 className="text-base sm:text-lg font-black text-white mb-1 uppercase tracking-wide">{feature.title}</h3>
-                  <p className="text-[11px] sm:text-xs text-gray-300 leading-snug font-medium line-clamp-2">{feature.desc}</p>
+                  <h3 className="text-[18px] sm:text-xl font-black text-white mb-1.5 uppercase tracking-wide">{feature.title}</h3>
+                  <p className="text-[13px] sm:text-sm text-gray-300 leading-snug font-medium line-clamp-2">{feature.desc}</p>
                 </div>
               </div>
             </FadeInSection>
@@ -546,30 +549,30 @@ export default function Home() {
       </section>
 
       {/* 6. VERIFIED GOOGLE REVIEWS */}
-      <section className="bg-white border-t border-gray-100 py-10 sm:py-14">
+      <section className="bg-white border-t border-gray-100 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-6 border-b border-gray-100 pb-3 gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 border-b border-gray-100 pb-4 gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   </svg>
-                  <h2 className="text-base sm:text-lg font-black text-[#1e293b] tracking-tight uppercase">Verified Feedback</h2>
+                  <h2 className="text-[18px] sm:text-xl font-black text-[#1e293b] tracking-tight uppercase">Verified Feedback</h2>
                 </div>
-                <p className="text-gray-500 text-[10px] sm:text-[11px] font-medium">Rated 4.9/5 by Engineers.</p>
+                <p className="text-gray-500 text-[12px] sm:text-[13px] font-medium">Rated 4.9/5 by Engineers & Procurement Managers.</p>
               </div>
-              <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 px-2 py-1 rounded shadow-sm self-start sm:self-auto">
-                <span className="text-[#1e293b] font-black text-xs mr-1">4.9</span>
-                {[...Array(5)].map((_, i) => <Star key={i} size={10} className="text-[#FBBC05] fill-[#FBBC05]" />)}
+              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded shadow-sm self-start sm:self-auto">
+                <span className="text-[#1e293b] font-black text-[13px] mr-1">4.9</span>
+                {[...Array(5)].map((_, i) => <Star key={i} size={12} className="text-[#FBBC05] fill-[#FBBC05]" />)}
               </div>
             </div>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 name: "Rohan M.", title: "Procurement, EV Tech",
@@ -585,21 +588,21 @@ export default function Home() {
               }
             ].map((review, i) => (
               <FadeInSection key={i} delay={i * 30}>
-                <div className="bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative group h-full">
-                  <div className="absolute top-4 right-4 text-gray-200 group-hover:text-blue-100 transition-colors duration-200">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
+                <div className="bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 p-5 sm:p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative group h-full">
+                  <div className="absolute top-5 right-5 text-gray-200 group-hover:text-blue-100 transition-colors duration-200">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
                   </div>
-                  <div className="flex items-center gap-0.5 mb-2 sm:mb-3">
-                    {[...Array(5)].map((_, i) => <Star key={i} size={10} className="text-[#FBBC05] fill-[#FBBC05]" />)}
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => <Star key={i} size={12} className="text-[#FBBC05] fill-[#FBBC05]" />)}
                   </div>
-                  <p className="text-gray-600 text-[11px] sm:text-xs leading-relaxed font-medium mb-4 relative z-10">"{review.text}"</p>
-                  <div className="border-t border-gray-200 pt-3 flex items-center justify-between">
+                  <p className="text-gray-600 text-[13px] sm:text-sm leading-relaxed font-medium mb-5 relative z-10">"{review.text}"</p>
+                  <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
                     <div>
-                      <h4 className="text-[#1e293b] font-black text-[11px] sm:text-xs uppercase">{review.name}</h4>
-                      <p className="text-gray-500 text-[8px] sm:text-[9px] uppercase font-bold tracking-wider">{review.title}</p>
+                      <h4 className="text-[#1e293b] font-black text-[12px] sm:text-[13px] uppercase">{review.name}</h4>
+                      <p className="text-gray-500 text-[9px] sm:text-[10px] uppercase font-bold tracking-wider">{review.title}</p>
                     </div>
-                    <div className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100 text-[7px] sm:text-[8px] font-bold uppercase flex items-center gap-0.5">
-                      <CheckCircle2 size={8} /> Verified
+                    <div className="bg-blue-50 text-blue-600 px-2 py-1 rounded border border-blue-100 text-[9px] font-bold uppercase flex items-center gap-1">
+                      <CheckCircle2 size={10} /> Verified
                     </div>
                   </div>
                 </div>
@@ -610,29 +613,29 @@ export default function Home() {
       </section>
 
       {/* 7. PROCUREMENT F.A.Q. */}
-      <section id="faq" className="bg-[#0f172a] py-12 sm:py-16 text-white border-t-4 border-orange-500 relative overflow-hidden">
+      <section id="faq" className="bg-[#0f172a] py-16 sm:py-20 text-white border-t-4 border-orange-500 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-[80px] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col md:flex-row gap-8 lg:gap-14">
+          <div className="flex flex-col md:flex-row gap-10 lg:gap-16">
 
             <div className="w-full md:w-1/3 shrink-0">
               <FadeInSection>
-                <div className="sticky top-20">
-                  <HelpCircle size={32} className="text-orange-500 mb-3 sm:mb-4" strokeWidth={2.5} />
-                  <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight uppercase leading-tight mb-2 sm:mb-3">
+                <div className="sticky top-24">
+                  <HelpCircle size={40} className="text-orange-500 mb-4 sm:mb-5" strokeWidth={2.5} />
+                  <h2 className="text-[26px] sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase leading-tight mb-3">
                     Procurement <br className="hidden md:block" /> F.A.Q.
                   </h2>
-                  <p className="text-gray-400 text-[11px] sm:text-xs font-medium leading-relaxed mb-4">
+                  <p className="text-gray-400 text-[13px] sm:text-sm font-medium leading-relaxed mb-5">
                     Find quick answers to our most common B2B logistics, tax, and shipping inquiries.
                   </p>
-                  <a href="mailto:support@densityelectronics.com" className="inline-flex items-center gap-1.5 text-orange-400 hover:text-orange-300 font-bold text-[11px] sm:text-xs uppercase tracking-wider group transition-colors">
-                    Contact Support <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                  <a href="mailto:support@densityelectronics.com" className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 font-bold text-[13px] sm:text-sm uppercase tracking-wider group transition-colors">
+                    Contact Support <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </a>
                 </div>
               </FadeInSection>
             </div>
 
-            <div className="w-full md:w-2/3 flex flex-col gap-3 sm:gap-4">
+            <div className="w-full md:w-2/3 flex flex-col gap-4">
               {[
                 { q: "Do you provide GST invoices for corporate orders?", a: "Yes, standard 18% GST invoices are automatically generated for all institutional and corporate purchases. Simply enter your GSTIN during checkout." },
                 { q: "What are your shipping and dispatch timelines?", a: "Dispatch is guaranteed same-day for orders placed before 2 PM IST. Standard delivery takes 3-5 business days across India." },
@@ -640,11 +643,11 @@ export default function Home() {
                 { q: "Are technical datasheets and pinouts available?", a: "Yes, full PDF datasheets, schematic symbols, and sample code are available directly on product pages or upon request." }
               ].map((faq, idx) => (
                 <FadeInSection key={idx} delay={idx * 30}>
-                  <div className="bg-[#1e293b]/50 backdrop-blur-sm border border-gray-800 hover:border-orange-500/50 p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
-                    <h4 className="text-white font-bold text-xs sm:text-sm mb-1.5 uppercase tracking-wide leading-snug flex items-start gap-2">
-                      <span className="text-orange-500">Q.</span>{faq.q}
+                  <div className="bg-[#1e293b]/50 backdrop-blur-sm border border-gray-800 hover:border-orange-500/50 p-5 sm:p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+                    <h4 className="text-white font-bold text-[15px] sm:text-lg mb-2 uppercase tracking-wide leading-snug flex items-start gap-2.5">
+                      <span className="text-orange-500 mt-0.5">Q.</span>{faq.q}
                     </h4>
-                    <p className="text-[11px] sm:text-xs text-gray-400 leading-relaxed font-medium sm:pl-5">
+                    <p className="text-[13px] sm:text-sm text-gray-400 leading-relaxed font-medium pl-6 sm:pl-7">
                       {faq.a}
                     </p>
                   </div>
@@ -657,25 +660,25 @@ export default function Home() {
       </section>
 
       {/* 9. PRE-FOOTER CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-14 mb-8 sm:mb-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 mb-12 sm:mb-16">
         <FadeInSection>
           <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-orange-600 bg-[length:200%_100%] animate-[gradient_3s_ease_infinite] rounded-2xl overflow-hidden relative shadow-xl border border-orange-400">
             <style>{`
               @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
             `}</style>
-            <div className="absolute top-0 right-0 w-48 h-48 sm:w-80 sm:h-80 bg-[#0f172a] opacity-20 blur-[50px] sm:blur-[70px] rounded-full mix-blend-multiply pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-[#0f172a] opacity-20 blur-[60px] sm:blur-[80px] rounded-full mix-blend-multiply pointer-events-none"></div>
 
-            <div className="px-5 py-8 sm:px-10 sm:py-12 flex flex-col lg:flex-row items-center justify-between gap-5 sm:gap-6 relative z-10">
+            <div className="px-6 py-10 sm:px-12 sm:py-14 flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
               <div className="max-w-2xl text-center lg:text-left">
-                <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight uppercase mb-2 sm:mb-3 drop-shadow-sm">
+                <h2 className="text-[24px] sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase mb-3 sm:mb-4 drop-shadow-sm">
                   Ready to source for production?
                 </h2>
-                <p className="text-orange-50 text-[11px] sm:text-sm font-medium leading-relaxed">
+                <p className="text-orange-50 text-[13px] sm:text-base font-medium leading-relaxed px-4 lg:px-0">
                   Whether you need a single ESP32 for a prototype or 5,000 customized displays, we have the inventory to support you.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full lg:w-auto">
-                <Link to="/bulk" className="bg-[#0f172a] hover:bg-black text-white px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg whitespace-nowrap block text-center w-full lg:w-auto border border-gray-800">
+              <div className="flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
+                <Link to="/bulk" className="bg-[#0f172a] hover:bg-black text-white px-8 py-4 sm:px-10 sm:py-4 rounded-xl font-black text-[13px] sm:text-sm uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg whitespace-nowrap block text-center w-full lg:w-auto border border-gray-800">
                   Request Bulk Quote
                 </Link>
               </div>

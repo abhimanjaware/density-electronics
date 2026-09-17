@@ -39,6 +39,15 @@ export default function ProductCard({ product }) {
         <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-[#1A1726] text-[9px] font-bold px-2 py-1.5 rounded-sm uppercase tracking-widest shadow-sm">
           {product.category}
         </div>
+
+        {/* Density Electronics Logo Overlay (Top Right) */}
+        <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm border border-gray-200">
+          <img 
+            src="/src/assets/headerlogo.png" 
+            alt="Density Electronics" 
+            className="w-5 h-5 object-contain"
+          />
+        </div>
       </Link>
 
       {/* Details Section */}

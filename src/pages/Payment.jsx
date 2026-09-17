@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { ShieldCheck, Lock, CreditCard, Loader2 } from 'lucide-react';
+import { ShieldCheck, Lock, CreditCard, Loader2, ArrowRight } from 'lucide-react';
 
 export default function Payment() {
   const location = useLocation();
@@ -31,16 +31,41 @@ export default function Payment() {
       return;
     }
 
-    // Razorpay Test Options (Replace with live key in production)
+    // Razorpay Configuration
     const options = {
-      key: "rzp_test_mockkeyid123", // Standard test key placeholder
+      key: "rzp_test_mockkeyid123", // Replace with your actual Razorpay Key
       amount: Math.round(order.total * 100), // Amount in paise
       currency: "INR",
       name: "Density Electronics",
-      description: `Order for ${order.items.length} item(s)`,
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=150",
+      description: `B2B Procurement Order (${order.items.length} items)`,
+      // IMPORTANT: The logo URL must be a publicly accessible web link (e.g., ImageKit or S3), not a local file path.
+      image: "https://ik.imagekit.io/t2r0vhpii/headerlogo33.png", 
+      
+      // THIS CONFIGURATION RESTRICTS RAZORPAY TO UPI & NETBANKING ONLY
+      config: {
+        display: {
+          blocks: {
+            upi: {
+              name: "UPI",
+              instruments: [
+                { method: "upi" }
+              ]
+            },
+            netbanking: {
+              name: "Netbanking",
+              instruments: [
+                { method: "netbanking" }
+              ]
+            }
+          },
+          sequence: ["block.upi", "block.netbanking"],
+          preferences: {
+            show_default_blocks: false // Hides Cards, Wallets, PayLater, and EMI
+          }
+        }
+      },
       handler: function (response) {
-        // Payment successful - forward to invoice with real Razorpay Payment ID
+        // Payment successful - forward to invoice
         navigate('/order-ready', { 
           state: { 
             ...order, 
@@ -51,51 +76,87 @@ export default function Payment() {
       },
       prefill: {
         name: order.customer.name,
-        email: order.customer.email || "customer@density.digital",
+        email: order.customer.email || "sales.densityelectronics@gmail.com",
         contact: order.customer.phone
       },
       theme: {
-        color: "#2A1B54"
+        color: "#ea580c" // Density Electronics Orange
+      },
+      modal: {
+        ondismiss: function() {
+          setLoading(false);
+        }
       }
     };
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
-    setLoading(false);
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-16 animate-fade-in text-[#1A1726]">
-      <div className="bg-white rounded-3xl border border-gray-200 shadow-xl p-8 md:p-10 text-center">
+    <div className="bg-[#f8fafc] min-h-screen font-sans flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-lg bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden animate-fade-in">
         
-        <div className="bg-[#F0EBF8] text-[#2A1B54] p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-          <Lock size={32} />
+        {/* Header Area */}
+        <div className="bg-[#1e293b] p-8 text-center relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ea580c_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="bg-orange-500/20 text-orange-400 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 border border-orange-500/30 shadow-inner">
+              <Lock size={32} />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black mb-1 text-white tracking-tight uppercase">
+              Secure Payment
+            </h1>
+            <p className="text-gray-400 font-medium text-sm">
+              Complete your procurement via Razorpay
+            </p>
+          </div>
         </div>
 
-        <h1 className="text-2xl font-black mb-2 tracking-tight">Razorpay Secure Checkout</h1>
-        <p className="text-gray-500 font-medium mb-8 text-sm">
-          You are paying <strong className="text-black">₹{order.total.toFixed(2)}</strong> via Razorpay Gateway (Supports UPI, Cards, NetBanking, & Bank Transfers).
-        </p>
+        {/* Content Area */}
+        <div className="p-8">
+          
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-8 space-y-3">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">Billed To</span>
+              <span className="font-black text-[#1e293b]">{order.customer.name}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm border-t border-gray-200 pt-3">
+              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">Contact</span>
+              <span className="font-black text-[#1e293b]">+91 {order.customer.phone}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm border-t border-gray-200 pt-3">
+              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">Payable Amount</span>
+              <span className="font-black text-orange-600 text-lg tracking-tight">₹{order.total.toFixed(2)}</span>
+            </div>
+          </div>
 
-        <div className="bg-gray-50 rounded-2xl p-4 mb-8 text-left border border-gray-100 text-sm space-y-2">
-          <div className="flex justify-between text-gray-500"><span>Customer:</span><span className="font-bold text-black">{order.customer.name}</span></div>
-          <div className="flex justify-between text-gray-500"><span>Phone:</span><span className="font-bold text-black">{order.customer.phone}</span></div>
-          <div className="flex justify-between text-gray-500"><span>Items Total:</span><span className="font-bold text-black">₹{order.total.toFixed(2)}</span></div>
+          <button 
+            onClick={handleOnlinePayment} 
+            disabled={loading}
+            className={`w-full font-black text-sm uppercase tracking-widest py-4 rounded-sm shadow-md flex justify-center items-center gap-3 transition-all ${
+              loading 
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-orange-600 text-white hover:bg-orange-500 hover:-translate-y-0.5 active:scale-95'
+            }`}
+          >
+            {loading ? (
+              <><Loader2 className="animate-spin" size={20} /> Initializing Gateway...</>
+            ) : (
+              <><CreditCard size={20} /> Pay Money Securely <ArrowRight size={18} /></>
+            )}
+          </button>
+
+          <div className="mt-6 flex flex-col items-center justify-center gap-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+              <ShieldCheck size={14} className="text-emerald-500"/> 256-Bit Encrypted Gateway
+            </div>
+            <div className="text-[10px] text-gray-400 font-medium">
+              Accepts UPI Apps (GPay, PhonePe, Paytm) & Netbanking
+            </div>
+          </div>
+
         </div>
-
-        <button 
-          onClick={handleOnlinePayment} 
-          disabled={loading}
-          className="w-full bg-[#2A1B54] text-white font-bold py-4 rounded-xl hover:bg-[#1f1341] transition-all shadow-md flex justify-center items-center gap-2 text-base"
-        >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : <CreditCard size={20} />}
-          Pay Now with Razorpay
-        </button>
-
-        <div className="mt-6 flex items-center justify-center gap-2 text-xs font-bold text-gray-400">
-          <ShieldCheck size={14} className="text-green-600"/> 256-Bit Encrypted Gateway Connection
-        </div>
-
       </div>
     </div>
   );

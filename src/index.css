@@ -1,10 +1,46 @@
 @import "tailwindcss";
 
+html {
+  /* Enables native smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+  
+  /* Hardware acceleration and crisp text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Prevents layout shift on mobile when scrollbars appear */
+  scrollbar-gutter: stable;
+}
+
 body {
   background-color: #F3F1F9; /* Soft lavender/gray from reference */
   color: #1A1726; /* Deep violet text */
+  
+  /* Prevents horizontal scrolling bugs globally */
+  overflow-x: hidden;
+  
+  /* Firefox Scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #F3F1F9;
 }
 
+/* Custom Webkit Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F3F1F9;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* Animations */
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
 }

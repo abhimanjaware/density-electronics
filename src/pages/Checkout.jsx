@@ -1,14 +1,47 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, User, MapPin, CreditCard, ShieldCheck } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  User, 
+  MapPin, 
+  ShieldCheck, 
+  Building2, 
+  Package, 
+  Lock 
+} from 'lucide-react';
+
+// Indian States and major cities data structure
+const INDIA_STATES_CITIES = {
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Solapur"],
+  "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Mangaluru", "Belagavi"],
+  "Delhi": ["New Delhi", "North Delhi", "South Delhi"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+  "Telangana": ["Hyderabad", "Warangal", "Nizamabad"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Noida", "Agra", "Varanasi"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol"]
+};
+
+// Utility to load the Razorpay SDK script dynamically
+const loadRazorpaySDK = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 export default function Checkout() {
   const { cartItems } = useCart();
   const navigate = useNavigate();
 
+  // Redirect if cart is empty
   useEffect(() => {
-    if (cartItems.length === 0) navigate('/shop');
+    if (cartItems.length === 0) navigate('/cart');
   }, [cartItems, navigate]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -16,121 +49,304 @@ export default function Checkout() {
   const total = subtotal + shipping;
 
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '', saveInfo: true
+    companyName: '', gstin: '', name: '', phone: '', email: '', 
+    address: '', state: '', city: '', pincode: '', saveInfo: true
   });
-  const [paymentMethod, setPaymentMethod] = useState('upi');
+  
+  const [availableCities, setAvailableCities] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
+  // Load saved data on mount
   useEffect(() => {
-    const saved = localStorage.getItem('density_customer');
-    if (saved) setFormData(prev => ({ ...prev, ...JSON.parse(saved), saveInfo: true }));
+    const saved = localStorage.getItem('density_b2b_customer');
+    if (saved) {
+      const parsedData = JSON.parse(saved);
+      setFormData(prev => ({ ...prev, ...parsedData, saveInfo: true }));
+      if (parsedData.state && INDIA_STATES_CITIES[parsedData.state]) {
+        setAvailableCities(INDIA_STATES_CITIES[parsedData.state]);
+      }
+    }
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    
+    // Auto-update cities when state changes
+    if (name === 'state') {
+      setAvailableCities(INDIA_STATES_CITIES[value] || []);
+      setFormData(prev => ({ ...prev, state: value, city: '' }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
-    if (formData.saveInfo) {
-      const dataToSave = { ...formData };
-      delete dataToSave.saveInfo; 
-      localStorage.setItem('density_customer', JSON.stringify(dataToSave));
-    } else {
-      localStorage.removeItem('density_customer');
+    
+    // Strict Validation
+    if (formData.phone.length !== 10 || !/^\d+$/.test(formData.phone)) {
+      alert("Please enter a valid 10-digit Mobile Number.");
+      return;
     }
-    navigate('/order-ready', { state: { customer: formData, items: cartItems, total, shipping, subtotal, paymentMethod } });
+    if (formData.pincode.length !== 6 || !/^\d+$/.test(formData.pincode)) {
+      alert("Please enter a valid 6-digit Pincode.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // 1. Load Razorpay Script
+    const res = await loadRazorpaySDK();
+    if (!res) {
+      alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
+      setIsProcessing(false);
+      return;
+    }
+
+    // 2. Razorpay Configuration Options
+    const options = {
+      key: 'rzp_test_YOUR_TEST_KEY_HERE', // **REPLACE THIS WITH YOUR ACTUAL RAZORPAY KEY**
+      amount: Math.round(total * 100), // Amount must be in paise (multiply by 100)
+      currency: 'INR',
+      name: 'Density Electronics',
+      description: 'B2B Procurement Order',
+      handler: function (response) {
+        // This function runs ONLY when payment is completely successful
+        
+        // Save customer data if requested
+        if (formData.saveInfo) {
+          const dataToSave = { ...formData };
+          delete dataToSave.saveInfo; 
+          localStorage.setItem('density_b2b_customer', JSON.stringify(dataToSave));
+        } else {
+          localStorage.removeItem('density_b2b_customer');
+        }
+
+        // Navigate to Order Confirmation with the Payment ID
+        navigate('/order-ready', { 
+          state: { 
+            customer: formData, 
+            items: cartItems, 
+            total, 
+            shipping, 
+            subtotal, 
+            paymentMethod: 'Razorpay',
+            paymentId: response.razorpay_payment_id 
+          } 
+        });
+      },
+      prefill: {
+        name: formData.name,
+        email: formData.email,
+        contact: formData.phone
+      },
+      theme: {
+        color: '#ea580c' // Matches your tailwind orange-600 theme
+      },
+      modal: {
+        ondismiss: function() {
+          // Runs if the user closes the popup without paying
+          setIsProcessing(false);
+        }
+      }
+    };
+
+    // 3. Open Razorpay Interface
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
   };
+
+  if (cartItems.length === 0) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 animate-fade-in text-[#1A1726] h-[calc(100vh-90px)] flex flex-col">
-      
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/cart" className="inline-flex items-center text-sm font-bold text-[#2A1B54] hover:text-[#2563EB] transition-colors">
-          <ArrowLeft size={16} className="mr-1.5" /> Return to Cart
-        </Link>
-        <h1 className="text-xl font-black tracking-tight">Secure Checkout</h1>
-      </div>
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow overflow-hidden">
+    <div className="bg-[#f8fafc] min-h-screen font-sans pb-24 pt-8 sm:pt-12">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Left: Forms (Scrollable if screen is very small, but designed to fit) */}
-        <div className="lg:col-span-2 space-y-4 overflow-y-auto pr-2 pb-4 custom-scrollbar">
-          
-          <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-            <h2 className="text-sm font-black mb-3 flex items-center gap-2 border-b border-gray-100 pb-2"><User size={16} className="text-[#2A1B54]"/> Customer Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="md:col-span-2">
-                <input required placeholder="Full Name *" type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54]" />
-              </div>
-              <div>
-                <input required placeholder="Mobile Number *" type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54]" />
-              </div>
-              <div>
-                <input placeholder="Email Address" type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54]" />
-              </div>
-            </div>
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b-2 border-gray-200 pb-5">
+          <div>
+            <Link to="/cart" className="inline-flex items-center gap-1.5 text-gray-500 hover:text-orange-600 text-[12px] font-black uppercase tracking-widest transition-colors mb-4">
+              <ArrowLeft size={16} strokeWidth={3} /> Back to Cart
+            </Link>
+            <h1 className="text-3xl sm:text-4xl font-black text-[#1e293b] tracking-tighter uppercase">
+              Secure Checkout
+            </h1>
           </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-            <h2 className="text-sm font-black mb-3 flex items-center gap-2 border-b border-gray-100 pb-2"><MapPin size={16} className="text-[#2A1B54]"/> Delivery Address</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="md:col-span-2">
-                <input required placeholder="Complete Address *" type="text" name="address" value={formData.address} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54]" />
-              </div>
-              <div className="grid grid-cols-3 gap-3 md:col-span-2">
-                <input required placeholder="City *" type="text" name="city" value={formData.city} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54] col-span-1" />
-                <input required placeholder="State *" type="text" name="state" value={formData.state} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54] col-span-1" />
-                <input required placeholder="Pincode *" type="text" name="pincode" value={formData.pincode} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#2A1B54] col-span-1" />
-              </div>
-            </div>
+          <div className="text-[12px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-md shadow-sm flex items-center gap-2">
+            <Lock size={16} /> 256-Bit SSL Encrypted
           </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-            <h2 className="text-sm font-black mb-3 flex items-center gap-2 border-b border-gray-100 pb-2"><CreditCard size={16} className="text-[#2A1B54]"/> Payment Method</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <label className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-[#2A1B54] bg-[#F0EBF8]' : 'border-gray-200'}`}>
-                <input type="radio" name="payment" value="upi" checked={paymentMethod === 'upi'} onChange={() => setPaymentMethod('upi')} className="w-4 h-4 accent-[#2A1B54]" />
-                <span className="text-sm font-bold text-[#1A1726]">UPI Payment</span>
-              </label>
-              <label className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'bank' ? 'border-[#2A1B54] bg-[#F0EBF8]' : 'border-gray-200'}`}>
-                <input type="radio" name="payment" value="bank" checked={paymentMethod === 'bank'} onChange={() => setPaymentMethod('bank')} className="w-4 h-4 accent-[#2A1B54]" />
-                <span className="text-sm font-bold text-[#1A1726]">Bank Transfer</span>
-              </label>
-            </div>
-          </div>
-
         </div>
 
-        {/* Right: Summary Sidebar */}
-        <div className="bg-[#12101A] text-white rounded-2xl border border-gray-800 p-6 shadow-xl h-fit flex flex-col">
-          <h2 className="text-lg font-black mb-4 border-b border-gray-800 pb-3">Order Details</h2>
+        <form onSubmit={handlePayment} className="flex flex-col xl:flex-row gap-8 items-start">
           
-          <div className="space-y-3 mb-4 overflow-y-auto max-h-[150px] custom-scrollbar pr-2 text-sm border-b border-gray-800 pb-4">
-            {cartItems.map(item => (
-              <div key={item.id} className="flex justify-between">
-                <span className="text-gray-400 truncate pr-2">{item.quantity}x {item.name}</span>
-                <span className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
+          {/* LEFT COLUMN: Clean, Bold Forms */}
+          <div className="w-full xl:w-2/3 space-y-8">
+            
+            {/* Business Information Box */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 sm:p-8">
+              <h2 className="text-lg font-black mb-6 text-[#1e293b] uppercase tracking-wide flex items-center gap-3">
+                <Building2 size={24} className="text-orange-500" /> B2B Information <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded ml-2">(Optional)</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Company / Institute Name</label>
+                  <input type="text" name="companyName" value={formData.companyName} onChange={handleInputChange} placeholder="Density Electronics Pvt Ltd" className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">GSTIN Number</label>
+                  <input type="text" name="gstin" value={formData.gstin} onChange={handleInputChange} placeholder="27AAAAA0000A1Z5" className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white uppercase" maxLength="15" />
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* Contact Details Box */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 sm:p-8">
+              <h2 className="text-lg font-black mb-6 text-[#1e293b] uppercase tracking-wide flex items-center gap-3">
+                <User size={24} className="text-orange-500" /> Contact Details
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Full Name <span className="text-red-500">*</span></label>
+                  <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Mobile Number <span className="text-red-500">*</span></label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-4 rounded-l-lg border-2 border-r-0 border-gray-200 bg-gray-100 text-gray-600 text-base font-black">+91</span>
+                    <input required type="tel" name="phone" value={formData.phone} onChange={handleInputChange} pattern="[0-9]{10}" maxLength="10" placeholder="10-digit number" className="w-full border-2 border-gray-200 rounded-r-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Email Address <span className="text-red-500">*</span></label>
+                  <input required type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white" />
+                </div>
+              </div>
+            </div>
+
+            {/* Shipping Address Box */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 sm:p-8">
+              <h2 className="text-lg font-black mb-6 text-[#1e293b] uppercase tracking-wide flex items-center gap-3">
+                <MapPin size={24} className="text-orange-500" /> Shipping Destination
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Complete Address <span className="text-red-500">*</span></label>
+                  <input required type="text" name="address" value={formData.address} onChange={handleInputChange} placeholder="Building, Street, Area" className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white" />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">State <span className="text-red-500">*</span></label>
+                  <select required name="state" value={formData.state} onChange={handleInputChange} className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-bold focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white cursor-pointer">
+                    <option value="" disabled>Select State</option>
+                    {Object.keys(INDIA_STATES_CITIES).sort().map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">City <span className="text-red-500">*</span></label>
+                  <select required name="city" value={formData.city} onChange={handleInputChange} disabled={!formData.state} className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-bold focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="" disabled>Select City</option>
+                    {availableCities.map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Pincode <span className="text-red-500">*</span></label>
+                  <input required type="text" name="pincode" value={formData.pincode} onChange={handleInputChange} maxLength="6" pattern="[0-9]{6}" placeholder="6-digit pincode" className="w-full md:w-1/2 border-2 border-gray-200 rounded-lg px-4 py-3 text-base text-gray-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all bg-gray-50 focus:bg-white tracking-widest" />
+                </div>
+              </div>
+
+              {/* Save Information Checkbox */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                  <input type="checkbox" name="saveInfo" checked={formData.saveInfo} onChange={handleInputChange} className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500 cursor-pointer" />
+                  <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors select-none">Securely save this address for future orders</span>
+                </label>
+              </div>
+            </div>
+
           </div>
 
-          <div className="space-y-2 text-sm mb-4 border-b border-gray-800 pb-4">
-            <div className="flex justify-between"><span className="text-gray-400">Subtotal</span><span className="font-bold">₹{subtotal.toFixed(2)}</span></div>
-            <div className="flex justify-between"><span className="text-gray-400">Shipping</span><span className="font-bold">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span></div>
-          </div>
-          
-          <div className="flex justify-between items-end mb-6">
-            <span className="text-base font-bold">Total</span>
-            <span className="text-2xl font-black text-[#937EE6]">₹{total.toFixed(2)}</span>
-          </div>
+          {/* RIGHT COLUMN: Sticky Order Summary & Pay Button */}
+          <div className="w-full xl:w-1/3 sticky top-28 space-y-6">
+            
+            {/* The Summary Card */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-6 sm:p-8 bg-gray-50 border-b border-gray-200">
+                <h2 className="text-lg font-black text-[#1e293b] uppercase tracking-wide flex items-center gap-3">
+                  <Package size={22} className="text-orange-500" /> Order Summary
+                </h2>
+              </div>
+              
+              <div className="p-6 sm:p-8">
+                {/* Condensed Cart Items */}
+                <div className="space-y-4 mb-6 border-b border-gray-100 pb-6">
+                  {cartItems.map(item => (
+                    <div key={item.id} className="flex justify-between items-start gap-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-[#1e293b] line-clamp-1">{item.name}</span>
+                        <span className="text-xs text-gray-500 font-bold uppercase mt-0.5">Qty: {item.quantity}</span>
+                      </div>
+                      <span className="text-sm font-black text-[#1e293b] shrink-0">₹{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
 
-          <button type="submit" className="w-full bg-[#E1FF01] text-[#1A1726] font-bold py-3.5 rounded-lg hover:bg-[#cbe600] transition-all flex justify-center items-center gap-2">
-            Confirm Order <ShieldCheck size={18}/>
-          </button>
-        </div>
+                {/* Subtotals */}
+                <div className="space-y-4 text-sm mb-8 border-b border-gray-200 pb-8">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-bold">Subtotal (Excl. Tax)</span>
+                    <span className="font-black text-[#1e293b] text-base">₹{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-bold">Shipping Cost</span>
+                    <span className="font-black text-[#1e293b] text-base">
+                      {shipping === 0 
+                        ? <span className="text-emerald-700 bg-emerald-100 px-2 py-1 rounded text-xs uppercase tracking-widest">Free</span> 
+                        : `₹${shipping.toFixed(2)}`}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Massive Total */}
+                <div className="flex justify-between items-end mb-8">
+                  <div>
+                    <span className="block text-lg font-black uppercase text-[#1e293b] tracking-tight">Total to Pay</span>
+                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Inclusive of all taxes</span>
+                  </div>
+                  <span className="text-4xl font-black text-orange-600 tracking-tighter">
+                    ₹{total.toFixed(2)}
+                  </span>
+                </div>
 
-      </form>
+                {/* Massive Primary Action Button */}
+                <button 
+                  type="submit" 
+                  disabled={isProcessing}
+                  className={`w-full font-black text-base sm:text-lg uppercase tracking-widest py-5 rounded-lg shadow-xl flex items-center justify-center gap-3 transition-all ${
+                    isProcessing 
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-orange-600 hover:bg-orange-500 hover:-translate-y-1 text-white active:scale-95'
+                  }`}
+                >
+                  {isProcessing ? 'Processing...' : `Pay ₹${total.toFixed(2)} Securely`}
+                  {!isProcessing && <ArrowRight size={20} />}
+                </button>
+                
+                {/* Trust Badge below button */}
+                <div className="mt-5 flex items-center justify-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Powered securely by <span className="text-[#3395ff] font-black">Razorpay</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

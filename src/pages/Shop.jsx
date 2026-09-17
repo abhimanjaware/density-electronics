@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Search, Star, Download, ShoppingCart, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Search, Star, ShoppingCart, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
 
@@ -126,10 +126,22 @@ export default function Shop() {
                     )}
                   </div>
 
-                  {/* Maximized Image Wrapper (Less padding, larger height) */}
-                  <Link to={`/product/${product.slug}`} className="h-56 w-full p-2 flex items-center justify-center bg-white border-b border-gray-200 shrink-0">
-                    <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain group-hover:opacity-85 transition-opacity" />
-                  </Link>
+                  {/* Maximized Image Wrapper */}
+                  <div className="relative h-56 w-full p-2 flex items-center justify-center bg-white border-b border-gray-200 shrink-0">
+                    
+                    {/* Density Electronics Logo Overlay (Top Right) */}
+                    <div className="absolute top-2 right-6 bg-white/90 backdrop-blur-sm rounded-full  shadow-sm border border-gray-200 z-10">
+                      <img 
+                        src="src\assets\stamp.png" 
+                        alt="Density Electronics" 
+                        className="w-10 h-10 object-contain"
+                      />
+                    </div>
+
+                    <Link to={`/product/${product.slug}`} className="w-full h-full flex items-center justify-center">
+                      <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain group-hover:opacity-85 transition-opacity" />
+                    </Link>
+                  </div>
 
                   {/* Condensed Data Area */}
                   <div className="p-3 flex flex-col flex-grow bg-gray-50/30">
@@ -149,9 +161,6 @@ export default function Shop() {
                       <li><span className="font-bold text-gray-800">Stock:</span> {product.stock > 0 ? `${product.stock} Units Available` : 'Check Lead Time'}</li>
                       <li><span className="font-bold text-gray-800">MOQ:</span> 1 Piece</li>
                       <li><span className="font-bold text-gray-800">Compliance:</span> RoHS 3, Pb-Free</li>
-                      <li className="flex items-center gap-1 text-blue-700 mt-1.5 hover:underline cursor-pointer font-bold">
-                        <Download size={12} /> Tech Datasheet.pdf
-                      </li>
                     </ul>
 
                     {/* Pricing & Action */}

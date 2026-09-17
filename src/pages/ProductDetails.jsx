@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import {  useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Star, Heart, RefreshCw, ShoppingBag, ShoppingCart, 
@@ -13,7 +12,6 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  // --- ADD THIS BLOCK ---
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
@@ -87,7 +85,6 @@ export default function ProductDetails() {
                 alt={product.name} 
                 className="max-h-[350px] max-w-full object-contain"
               />
-              {/* Optional thumbnails row placeholder below main image */}
               <div className="absolute bottom-4 flex gap-2">
                 <div className="w-16 h-16 border border-[#2A1B54] rounded-lg p-1 bg-white cursor-pointer">
                   <img src={product.image} alt="thumb" className="w-full h-full object-contain" />
@@ -157,15 +154,15 @@ export default function ProductDetails() {
 
             {/* Specifications List */}
             <div className="text-sm text-gray-700 space-y-2 mb-6">
-              <p>1. {product.shortDescription}</p>
-              <p>2. High Grade Industrial Component</p>
-              <p>3. Perfect for IoT & Robotics</p>
+              <p>• {product.shortDescription}</p>
+              <p>• High Grade Industrial Component</p>
+              <p>• Fast and Traceable Dispatch</p>
             </div>
 
             {/* Grid Attributes */}
             <div className="grid grid-cols-[100px_1fr] gap-y-2 text-sm text-gray-800 font-medium mb-8">
               <div className="text-gray-500">MPN</div>
-              <div>: N/A</div>
+              <div>: {product.specifications?.partNumber || "N/A"}</div>
               <div className="text-gray-500">Brand</div>
               <div>: Density Electronics</div>
               <div className="text-gray-500">Category</div>
@@ -240,6 +237,17 @@ export default function ProductDetails() {
               </div>
             </div>
 
+            {/* DETAILED DESCRIPTION SECTION (Added) */}
+            {product.detailedDescription && product.detailedDescription.toLowerCase() !== "nan" && (
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <h2 className="text-2xl font-black text-[#1e293b] tracking-tight uppercase mb-5">
+                  Product Description
+                </h2>
+                <div className="text-gray-600 leading-relaxed font-medium whitespace-pre-wrap">
+                  {product.detailedDescription}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
