@@ -12,6 +12,8 @@ import heroBg1 from '../assets/bg2.png';
 import heroBg2 from '../assets/bg1.png';
 import heroBg3 from '../assets/bg3.png';
 
+import logo from '../assets/headerlogo33.png';
+
 // 1. FAST NATIVE SCROLL ANIMATION
 const FadeInSection = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setVisible] = useState(false);

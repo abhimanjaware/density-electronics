@@ -12,6 +12,7 @@ import {
   AlertCircle,
   X
 } from 'lucide-react'; // Removed Linkedin, Twitter, Youtube, Instagram
+import logo from '../assets/headerlogo33.png';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -89,7 +90,7 @@ export default function Footer() {
         <div className="lg:col-span-2 space-y-6">
             <Link to="/" className="inline-flex items-center">
               <img
-                src="src/assets/headerlogo33.png"
+                src={logo}
                 alt="Density Electronics Logo"
                 className="h-12 sm:h-16 w-auto object-contain"
               />
