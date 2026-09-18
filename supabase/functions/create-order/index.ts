@@ -2,155 +2,71 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-async function generateSignature(
-  orderId: string,
-  paymentId: string,
-  secret: string,
-) {
-  const encoder = new TextEncoder();
-
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    encoder.encode(`${orderId}|${paymentId}`),
-  );
-
-  return Array.from(new Uint8Array(signature))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
 Deno.serve(async (req) => {
+  // 1. Handle CORS preflight (Crucial for React to talk to Supabase)
   if (req.method === "OPTIONS") {
-    return new Response("ok", {
-      headers: corsHeaders,
-    });
-  }
-
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      {
-        status: 405,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const {
-      razorpay_payment_id,
-      razorpay_order_id,
-      razorpay_signature,
-    } = await req.json();
+    const { amount } = await req.json();
 
-    if (
-      !razorpay_payment_id ||
-      !razorpay_order_id ||
-      !razorpay_signature
-    ) {
+    if (!amount) {
       return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Missing payment verification fields.",
-        }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        },
+        JSON.stringify({ error: "Amount is required" }), 
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-
+    // 2. Safely pull keys from Supabase Vault
+    const keyId = Deno.env.get("RAZORPAY_KEY_ID");
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
-    if (!keySecret) {
-      console.error("Razorpay secret is not configured.");
-
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Payment verification is not configured.",
-        }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+    if (!keyId || !keySecret) {
+      throw new Error("Razorpay keys are missing in backend secrets.");
     }
 
-    const generatedSignature = await generateSignature(
-      razorpay_order_id,
-      razorpay_payment_id,
-      keySecret,
-    );
+    // 3. Request the Order ID from Razorpay's servers
+    const razorpayRes = await fetch("https://api.razorpay.com/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${btoa(`${keyId}:${keySecret}`)}`,
+      },
+      body: JSON.stringify({
+        amount: amount,
+        currency: "INR",
+        receipt: `rcpt_${Date.now()}`,
+      }),
+    });
 
-    if (generatedSignature !== razorpay_signature) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Payment verification failed.",
-        }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+    const orderData = await razorpayRes.json();
+
+    if (!razorpayRes.ok) {
+       return new Response(
+         JSON.stringify(orderData), 
+         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+       );
     }
 
+    // 4. Return the Order ID safely to React
     return new Response(
       JSON.stringify({
-        success: true,
-        message: "Payment verified successfully.",
+        order_id: orderData.id,
+        amount: orderData.amount,
+        currency: orderData.currency,
       }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      },
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+
   } catch (error) {
-    console.error("Payment verification error:", error);
-
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Something went wrong during payment verification.",
-      }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      },
+      JSON.stringify({ error: error.message }), 
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

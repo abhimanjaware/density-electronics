@@ -227,7 +227,7 @@ export default function Home() {
     <div className="w-full bg-[#f8fafc] font-sans pb-16 overflow-x-hidden">
 
       {/* 1. HERO SECTION (Proper Mobile Hierarchy) */}
-      <section className="relative w-full h-[75vh] sm:h-[70vh] min-h-[500px] flex items-center overflow-hidden bg-[#050b1a]">
+      <section className="relative w-full h-[100vh] sm:h-[70vh] min-h-[500px] flex items-center overflow-hidden bg-[#050b1a]">
         {heroSlides.map((slide, index) => (
           <div
             key={index}

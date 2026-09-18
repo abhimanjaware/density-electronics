@@ -11,6 +11,7 @@ import Categories from './pages/Categories';
 import Bulk from './pages/Bulk';
 import Sell from './pages/Sell';
 import About from './pages/About';
+import Payment from './pages/Payment'; // (Adjust path if necessary)
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="sell" element={<Sell />} />
           <Route path="about" element={<About />} />
+          <Route path="/payment" element={<Payment />} />
+        
+        <Route path="/order-ready" element={<OrderReady />} />
         </Route>
       </Routes>
     </>

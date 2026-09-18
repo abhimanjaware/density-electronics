@@ -7,9 +7,12 @@ import { useCart } from '../context/CartContext';
 import { products, categories } from '../data/products';
 
 export default function Header() {
-  const { cartCount } = useCart();
+  const { cartItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // CALCULATE TOTAL ITEMS IN CART
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
@@ -189,9 +192,9 @@ export default function Header() {
             <Link to="/cart" className="flex items-center gap-2 hover:text-[#ffb700] transition-colors relative group">
               <ShoppingCart size={22} className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline font-semibold text-[13px]">Cart</span>
-              {cartCount > 0 && (
+              {cartItemCount > 0 && (
                 <span className="absolute -top-2 -right-2.5 sm:-left-3 bg-[#f59e0b] text-[#050b14] text-[10px] font-black rounded-full h-4 w-4 flex items-center justify-center shadow-sm">
-                  {cartCount}
+                  {cartItemCount}
                 </span>
               )}
             </Link>

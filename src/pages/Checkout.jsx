@@ -24,17 +24,6 @@ const INDIA_STATES_CITIES = {
   "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol"]
 };
 
-// Utility to load the Razorpay SDK script dynamically
-const loadRazorpaySDK = () => {
-  return new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
-
 export default function Checkout() {
   const { cartItems } = useCart();
   const navigate = useNavigate();
@@ -54,7 +43,6 @@ export default function Checkout() {
   });
   
   const [availableCities, setAvailableCities] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   // Load saved data on mount
   useEffect(() => {
@@ -80,7 +68,7 @@ export default function Checkout() {
     }
   };
 
-  const handlePayment = async (e) => {
+  const handleCheckoutSubmit = (e) => {
     e.preventDefault();
     
     // Strict Validation
@@ -93,67 +81,25 @@ export default function Checkout() {
       return;
     }
 
-    setIsProcessing(true);
-
-    // 1. Load Razorpay Script
-    const res = await loadRazorpaySDK();
-    if (!res) {
-      alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
-      setIsProcessing(false);
-      return;
+    // Save customer data if requested
+    if (formData.saveInfo) {
+      const dataToSave = { ...formData };
+      delete dataToSave.saveInfo; 
+      localStorage.setItem('density_b2b_customer', JSON.stringify(dataToSave));
+    } else {
+      localStorage.removeItem('density_b2b_customer');
     }
 
-    // 2. Razorpay Configuration Options
-    const options = {
-      key: 'rzp_test_YOUR_TEST_KEY_HERE', // **REPLACE THIS WITH YOUR ACTUAL RAZORPAY KEY**
-      amount: Math.round(total * 100), // Amount must be in paise (multiply by 100)
-      currency: 'INR',
-      name: 'Density Electronics',
-      description: 'B2B Procurement Order',
-      handler: function (response) {
-        // This function runs ONLY when payment is completely successful
-        
-        // Save customer data if requested
-        if (formData.saveInfo) {
-          const dataToSave = { ...formData };
-          delete dataToSave.saveInfo; 
-          localStorage.setItem('density_b2b_customer', JSON.stringify(dataToSave));
-        } else {
-          localStorage.removeItem('density_b2b_customer');
-        }
-
-        // Navigate to Order Confirmation with the Payment ID
-        navigate('/order-ready', { 
-          state: { 
-            customer: formData, 
-            items: cartItems, 
-            total, 
-            shipping, 
-            subtotal, 
-            paymentMethod: 'Razorpay',
-            paymentId: response.razorpay_payment_id 
-          } 
-        });
-      },
-      prefill: {
-        name: formData.name,
-        email: formData.email,
-        contact: formData.phone
-      },
-      theme: {
-        color: '#ea580c' // Matches your tailwind orange-600 theme
-      },
-      modal: {
-        ondismiss: function() {
-          // Runs if the user closes the popup without paying
-          setIsProcessing(false);
-        }
-      }
-    };
-
-    // 3. Open Razorpay Interface
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+    // Navigate to the Payment page and pass the order payload
+    navigate('/payment', { 
+      state: { 
+        customer: formData, 
+        items: cartItems, 
+        total, 
+        shipping, 
+        subtotal
+      } 
+    });
   };
 
   if (cartItems.length === 0) return null;
@@ -177,7 +123,7 @@ export default function Checkout() {
           </div>
         </div>
 
-        <form onSubmit={handlePayment} className="flex flex-col xl:flex-row gap-8 items-start">
+        <form onSubmit={handleCheckoutSubmit} className="flex flex-col xl:flex-row gap-8 items-start">
           
           {/* LEFT COLUMN: Clean, Bold Forms */}
           <div className="w-full xl:w-2/3 space-y-8">
@@ -271,10 +217,9 @@ export default function Checkout() {
 
           </div>
 
-          {/* RIGHT COLUMN: Sticky Order Summary & Pay Button */}
+          {/* RIGHT COLUMN: Sticky Order Summary & Proceed Button */}
           <div className="w-full xl:w-1/3 sticky top-28 space-y-6">
             
-            {/* The Summary Card */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="p-6 sm:p-8 bg-gray-50 border-b border-gray-200">
                 <h2 className="text-lg font-black text-[#1e293b] uppercase tracking-wide flex items-center gap-3">
@@ -323,23 +268,17 @@ export default function Checkout() {
                   </span>
                 </div>
 
-                {/* Massive Primary Action Button */}
+                {/* Navigation Action Button */}
                 <button 
                   type="submit" 
-                  disabled={isProcessing}
-                  className={`w-full font-black text-base sm:text-lg uppercase tracking-widest py-5 rounded-lg shadow-xl flex items-center justify-center gap-3 transition-all ${
-                    isProcessing 
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-orange-600 hover:bg-orange-500 hover:-translate-y-1 text-white active:scale-95'
-                  }`}
+                  className="w-full bg-[#1e293b] hover:bg-black text-white font-black text-base sm:text-lg uppercase tracking-widest py-5 rounded-lg shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95"
                 >
-                  {isProcessing ? 'Processing...' : `Pay ₹${total.toFixed(2)} Securely`}
-                  {!isProcessing && <ArrowRight size={20} />}
+                  Proceed to Payment <ArrowRight size={20} />
                 </button>
                 
                 {/* Trust Badge below button */}
                 <div className="mt-5 flex items-center justify-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
-                  Powered securely by <span className="text-[#3395ff] font-black">Razorpay</span>
+                  Secure processing on next step <ShieldCheck size={14} className="text-emerald-500"/>
                 </div>
               </div>
             </div>

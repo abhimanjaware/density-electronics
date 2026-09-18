@@ -3,6 +3,8 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Search, Star, ShoppingCart, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
+// VITE DEPLOYMENT FIX: Images inside src/assets MUST be imported to work in production
+import stampImg from '../assets/stamp.png';
 
 export default function Shop() {
   const location = useLocation();
@@ -13,6 +15,7 @@ export default function Shop() {
 
   const { addToCart } = useCart();
   const [addedIds, setAddedIds] = useState({});
+  const [sortType, setSortType] = useState('Best Match'); // New Sorting State
 
   const handleAddToCart = (product) => {
     if (product.stock === 0) return;
@@ -23,7 +26,7 @@ export default function Shop() {
     }, 1200);
   };
 
-  // Filter products based on URL params
+  // 1. Filter products based on URL params
   const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory && selectedCategory !== 'All' 
       ? product.category.toLowerCase() === selectedCategory.toLowerCase() 
@@ -36,6 +39,22 @@ export default function Shop() {
       : true;
 
     return matchesCategory && matchesSearch;
+  });
+
+  // 2. Sort the filtered products based on the dropdown selection
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortType) {
+      case 'Price: Low to High':
+        return a.price - b.price;
+      case 'Price: High to Low':
+        return b.price - a.price;
+      case 'Availability':
+        // Puts higher stock (in-stock) items before 0 stock (out-of-stock) items
+        return b.stock - a.stock;
+      case 'Best Match':
+      default:
+        return 0; // Keeps default array order
+    }
   });
 
   return (
@@ -64,33 +83,37 @@ export default function Shop() {
             
             <div className="flex items-center gap-4 text-white bg-[#0f172a] px-5 py-2.5 border border-gray-700 shadow-inner">
               <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Results:</div>
-              <div className="text-2xl font-black text-orange-500 leading-none">{filteredProducts.length}</div>
+              <div className="text-2xl font-black text-orange-500 leading-none">{sortedProducts.length}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. MAIN B2B GRID AREA (Maximized Width, Minimal Padding) */}
+      {/* 2. MAIN B2B GRID AREA */}
       <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-6">
         
         {/* Dense Control Bar */}
         <div className="bg-white border border-gray-300 p-2.5 mb-5 flex items-center justify-between shadow-sm">
           <span className="text-[11px] font-black uppercase tracking-widest text-gray-500 ml-2">
-            Displaying {filteredProducts.length} Components
+            Displaying {sortedProducts.length} Components
           </span>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-600">
             <span>Sort By:</span>
-            <select className="bg-gray-50 border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-orange-500 text-gray-900 font-bold cursor-pointer">
-              <option>Best Match</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Availability</option>
+            <select 
+              value={sortType}
+              onChange={(e) => setSortType(e.target.value)}
+              className="bg-gray-50 border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-orange-500 text-gray-900 font-bold cursor-pointer"
+            >
+              <option value="Best Match">Best Match</option>
+              <option value="Price: Low to High">Price: Low to High</option>
+              <option value="Price: High to Low">Price: High to Low</option>
+              <option value="Availability">Availability</option>
             </select>
           </div>
         </div>
 
         {/* Dense Results Grid */}
-        {filteredProducts.length === 0 ? (
+        {sortedProducts.length === 0 ? (
           <div className="bg-white border-2 border-dashed border-gray-300 p-16 text-center shadow-sm">
             <div className="mx-auto w-16 h-16 bg-gray-100 flex items-center justify-center mb-4 border border-gray-200">
               <Search size={24} className="text-gray-400" />
@@ -106,7 +129,7 @@ export default function Shop() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {filteredProducts.map((product) => {
+            {sortedProducts.map((product) => {
               const isAdded = !!addedIds[product.id];
               const isOutOfStock = product.stock === 0;
 
@@ -130,9 +153,9 @@ export default function Shop() {
                   <div className="relative h-56 w-full p-2 flex items-center justify-center bg-white border-b border-gray-200 shrink-0">
                     
                     {/* Density Electronics Logo Overlay (Top Right) */}
-                    <div className="absolute top-2 right-6 bg-white/90 backdrop-blur-sm rounded-full  shadow-sm border border-gray-200 z-10">
+                    <div className="absolute top-2 right-6 bg-white/90 backdrop-blur-sm rounded-full shadow-sm border border-gray-200 z-10">
                       <img 
-                        src="src\assets\stamp.png" 
+                        src={stampImg} // DEPLOYMENT FIX: Using the imported image variable
                         alt="Density Electronics" 
                         className="w-10 h-10 object-contain"
                       />
