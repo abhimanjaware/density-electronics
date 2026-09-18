@@ -1169,6 +1169,12 @@ export default function Categories() {
             </div>
           ))}
         </div>
+</we have to set razorpay and then once its done check the whole code before making to >
+add razorpay 
+check the whole code
+about section
+Header
+make it all nice and then continue with the copilot 
 
       </div>
     </div>

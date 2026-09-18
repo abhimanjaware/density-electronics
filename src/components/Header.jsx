@@ -11,21 +11,17 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // CALCULATE TOTAL ITEMS IN CART
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  // Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchContainerRef = useRef(null);
   const mobileSearchContainerRef = useRef(null);
 
-  // Menu States
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Comprehensive Live Filter for all 180 Products
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
       const query = searchQuery.toLowerCase().trim();
@@ -35,9 +31,8 @@ export default function Header() {
         const partMatch = p.specifications?.partNumber?.toLowerCase().includes(query);
         const descMatch = p.shortDescription?.toLowerCase().includes(query);
         const idMatch = p.id?.toLowerCase().includes(query);
-
         return nameMatch || categoryMatch || partMatch || descMatch || idMatch;
-      }).slice(0, 8); // Display up to 8 live dropdown suggestions
+      }).slice(0, 8);
 
       setSuggestions(matches);
       setShowSuggestions(true);
@@ -47,7 +42,6 @@ export default function Header() {
     }
   }, [searchQuery]);
 
-  // Click outside to close desktop search suggestions
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -61,16 +55,16 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change & safely lock body scroll
+  // Close the drawer only when the route actually changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+  }, [location.pathname]);
+
+  // Lock/unlock body scroll purely based on open state
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [location.pathname, isMobileMenuOpen]);
+  }, [isMobileMenuOpen]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -110,24 +104,24 @@ export default function Header() {
 
   return (
     <header className="w-full font-sans sticky top-0 z-50 shadow-2xl">
-      
+
       {/* 1. TOP MAIN HEADER */}
       <div className="bg-[#050b14] text-white border-b border-gray-800/50 relative z-40">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-4 lg:gap-8">
-          
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-4 flex items-center justify-between gap-4 lg:gap-8 min-h-[72px] sm:min-h-0">
+
           {/* Logo Section */}
           <Link to="/" className="flex items-center flex-shrink-0 z-40">
-            <div className="flex items-center h-[5vh] gap-2.5 sm:gap-3">
-              <img 
-                src="src/assets/headerlogo33.png" 
-                alt="Density Logo" 
-                className="h-9 w-9 sm:h-16 sm:w-16 object-contain"
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <img
+                src="src/assets/headerlogo33.png"
+                alt="Density Logo"
+                className="h-14 w-14 sm:h-16 sm:w-16 object-contain"
                 onError={handleImageError}
               />
             </div>
           </Link>
 
-          {/* Desktop Search Bar (Searches all 180 products) */}
+          {/* Desktop Search Bar */}
           <div ref={searchContainerRef} className="flex-1 max-w-2xl relative hidden lg:block">
             <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-full overflow-hidden shadow-inner h-11">
               <input
@@ -146,7 +140,6 @@ export default function Header() {
               </button>
             </form>
 
-            {/* Desktop Search Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl z-50 overflow-hidden">
                 {suggestions.map((product) => (
@@ -170,9 +163,8 @@ export default function Header() {
           </div>
 
           {/* Right Action Icons & Mobile Toggle */}
-          <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0 text-gray-200 z-40">
-            
-            {/* Desktop Social Icons */}
+          <div className="flex items-center gap-5 sm:gap-6 lg:gap-8 flex-shrink-0 text-gray-200 z-40">
+
             <div className="hidden xl:flex items-center gap-4 text-gray-400">
               <a href="#" className="hover:text-[#ffb700] transition-colors" title="LinkedIn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
@@ -185,27 +177,37 @@ export default function Header() {
               </a>
             </div>
 
-            {/* Divider for Desktop */}
             <div className="hidden xl:block h-6 w-[1px] bg-gray-700"></div>
+
+            {/* Mobile search trigger */}
+            <button
+              type="button"
+              className="lg:hidden flex items-center justify-center text-white active:scale-90 transition-transform"
+              aria-label="Search"
+            >
+              <Search size={26} strokeWidth={2.2} />
+            </button>
 
             {/* Cart Icon */}
             <Link to="/cart" className="flex items-center gap-2 hover:text-[#ffb700] transition-colors relative group">
-              <ShoppingCart size={22} className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+              <ShoppingCart size={28} className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline font-semibold text-[13px]">Cart</span>
               {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2.5 sm:-left-3 bg-[#f59e0b] text-[#050b14] text-[10px] font-black rounded-full h-4 w-4 flex items-center justify-center shadow-sm">
+                <span className="absolute -top-2.5 -right-3 sm:-left-3 bg-[#ffb700] text-[#050b14] text-[11px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                   {cartItemCount}
                 </span>
               )}
             </Link>
 
             {/* Mobile Hamburger Button */}
-            <button 
-              className="lg:hidden flex items-center justify-center text-white hover:text-[#ffb700] transition-colors p-2 -mr-2"
+            <button
+              type="button"
+              className="lg:hidden flex items-center justify-center text-white hover:text-[#ffb700] active:scale-90 transition-all p-1"
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Open Menu"
+              aria-expanded={isMobileMenuOpen}
             >
-              <Menu size={26} />
+              <Menu size={32} />
             </button>
           </div>
 
@@ -215,16 +217,13 @@ export default function Header() {
       {/* 2. DESKTOP SECONDARY NAVIGATION BAR */}
       <div className="hidden lg:block bg-[#050b14]">
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center gap-8 relative">
-          
-          {/* All Categories Dropdown Menu */}
           <div className="relative h-full flex items-center" onMouseEnter={() => setIsCategoryOpen(true)} onMouseLeave={() => setIsCategoryOpen(false)}>
             <button className="flex items-center gap-2 text-white font-bold text-[13px] hover:text-[#ffb700] transition-colors cursor-pointer h-full border-b-2 border-transparent hover:border-[#ffb700]">
               <Menu size={18} />
               All Categories
               <ChevronDown size={14} className="ml-1 transition-transform" style={{ transform: isCategoryOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
-            
-            {/* Desktop Dropdown List */}
+
             {isCategoryOpen && categories && (
               <div className="absolute top-full left-0 w-64 bg-white border border-gray-200 shadow-xl z-50 rounded-b-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                 {categories.slice(0, 8).map((cat) => (
@@ -239,7 +238,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Main Links */}
           <nav className="flex items-center h-full gap-8 text-[13px] font-bold text-gray-300">
             <Link to="/" className="text-white border-b-2 border-[#ffb700] h-full flex items-center transition-colors">Home</Link>
             <Link to="/categories" className="hover:text-white transition-colors">Categories</Link>
@@ -255,30 +253,30 @@ export default function Header() {
       </div>
 
       {/* 3. MOBILE MENU DRAWER */}
-      <div 
-        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] transition-opacity duration-300 lg:hidden ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`} 
+      <div
+        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] transition-opacity duration-300 lg:hidden ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
         onClick={() => setIsMobileMenuOpen(false)}
         aria-hidden="true"
       ></div>
 
-      <div className={`fixed top-0 right-0 h-[100dvh] w-[85%] max-w-[360px] bg-[#050b14] shadow-2xl z-[70] transform transition-transform duration-300 ease-out lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-          <span className="text-white font-black text-lg tracking-wide uppercase">Menu</span>
-          <button 
-            onClick={() => setIsMobileMenuOpen(false)} 
-            className="text-gray-400 hover:text-white p-2 -mr-2 rounded-full transition-colors"
+      <div className={`fixed top-0 right-0 h-[100dvh] w-[88%] max-w-[380px] bg-[#050b14] shadow-2xl z-[70] transform transition-transform duration-300 ease-out lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+
+        <div className="flex items-center justify-between px-5 py-5 border-b border-gray-800">
+          <span className="text-white font-black text-xl tracking-wide uppercase">Menu</span>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-gray-400 hover:text-white p-2.5 -mr-2 rounded-full transition-colors active:scale-90"
             aria-label="Close Menu"
           >
-            <X size={26} />
+            <X size={28} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-6 hide-scrollbar">
-          
-          {/* Mobile Search Bar */}
+
           <div ref={mobileSearchContainerRef} className="relative w-full mb-8">
-            <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-md overflow-hidden h-[46px] shadow-inner border border-transparent focus-within:border-[#2563eb] transition-colors">
+            <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white rounded-md overflow-hidden h-[48px] shadow-inner border border-transparent focus-within:border-[#2563eb] transition-colors">
               <input
                 type="text"
                 value={searchQuery}
@@ -292,7 +290,6 @@ export default function Header() {
               </button>
             </form>
 
-            {/* Mobile Search Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="relative mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1">
                 {suggestions.map((product) => (
@@ -321,17 +318,17 @@ export default function Header() {
               { name: "Sell on Density", path: "/sell" },
               { name: "About Us", path: "/about" },
             ].map((link, idx) => (
-              <Link 
+              <Link
                 key={idx}
-                to={link.path} 
-                onClick={() => setIsMobileMenuOpen(false)} 
+                to={link.path}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center justify-between py-4 border-b border-gray-800/60 font-bold text-[16px] transition-colors ${link.highlight ? 'text-[#ffb700]' : 'text-gray-300'}`}
               >
                 {link.name}
                 <ChevronRight size={18} className="text-gray-600" />
               </Link>
             ))}
-            
+
             <button onClick={(e) => handleScrollToSection(e, 'brands')} className="flex items-center justify-between py-4 border-b border-gray-800/60 font-bold text-[16px] text-gray-300 w-full text-left transition-colors">
               Featured Brands <ChevronRight size={18} className="text-gray-600" />
             </button>
@@ -342,7 +339,6 @@ export default function Header() {
 
         </div>
 
-        {/* Mobile Extra Actions / Social Bar */}
         <div className="bg-[#02050a] p-5 pb-8 border-t border-gray-800 flex items-center justify-center gap-6 text-[15px] font-bold text-gray-400">
           <a href="#" className="hover:text-[#ffb700] transition-colors" title="LinkedIn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>

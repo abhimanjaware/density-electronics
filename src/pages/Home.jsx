@@ -660,25 +660,25 @@ export default function Home() {
       </section>
 
       {/* 9. PRE-FOOTER CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 mb-12 sm:mb-16">
+      <section className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10 sm:mt-16 mb-10 sm:mb-16">
         <FadeInSection>
-          <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-orange-600 bg-[length:200%_100%] animate-[gradient_3s_ease_infinite] rounded-2xl overflow-hidden relative shadow-xl border border-orange-400">
+          <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-orange-600 bg-[length:200%_100%] animate-[gradient_3s_ease_infinite] rounded-xl sm:rounded-2xl overflow-hidden relative shadow-xl border border-orange-400">
             <style>{`
               @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
             `}</style>
             <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-[#0f172a] opacity-20 blur-[60px] sm:blur-[80px] rounded-full mix-blend-multiply pointer-events-none"></div>
 
-            <div className="px-6 py-10 sm:px-12 sm:py-14 flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
-              <div className="max-w-2xl text-center lg:text-left">
-                <h2 className="text-[24px] sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase mb-3 sm:mb-4 drop-shadow-sm">
+            <div className="px-4 py-8 sm:px-12 sm:py-14 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 relative z-10">
+              <div className="max-w-2xl w-full text-center lg:text-left">
+                <h2 className="text-xl leading-tight sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase mb-3 sm:mb-4 drop-shadow-sm">
                   Ready to source for production?
                 </h2>
-                <p className="text-orange-50 text-[13px] sm:text-base font-medium leading-relaxed px-4 lg:px-0">
+                <p className="text-orange-50 text-xs sm:text-base font-medium leading-relaxed px-1 sm:px-4 lg:px-0">
                   Whether you need a single ESP32 for a prototype or 5,000 customized displays, we have the inventory to support you.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
-                <Link to="/bulk" className="bg-[#0f172a] hover:bg-black text-white px-8 py-4 sm:px-10 sm:py-4 rounded-xl font-black text-[13px] sm:text-sm uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg whitespace-nowrap block text-center w-full lg:w-auto border border-gray-800">
+              <div className="flex-shrink-0 w-full lg:w-auto mt-1 lg:mt-0">
+                <Link to="/bulk" className="bg-[#0f172a] hover:bg-black text-white px-5 py-3.5 sm:px-10 sm:py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-[0.12em] sm:tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg whitespace-normal sm:whitespace-nowrap block text-center w-full lg:w-auto border border-gray-800">
                   Request Bulk Quote
                 </Link>
               </div>
