@@ -5,9 +5,12 @@ import {
   Lock,
   CreditCard,
   Loader2,
-  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Receipt
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 export default function Payment() {
   const location = useLocation();
@@ -21,20 +24,15 @@ export default function Payment() {
   // Load Razorpay Checkout SDK
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      // Prevent loading the script multiple times
       if (window.Razorpay) {
         resolve(true);
         return;
       }
-
       const script = document.createElement('script');
-
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
-
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
-
       document.body.appendChild(script);
     });
   };
@@ -45,81 +43,53 @@ export default function Payment() {
     try {
       setLoading(true);
 
-      // ----------------------------------------
       // 1. Load Razorpay Checkout
-      // ----------------------------------------
-
       const razorpayLoaded = await loadRazorpayScript();
-
       if (!razorpayLoaded) {
-        alert(
-          'Razorpay could not be loaded. Please check your internet connection and try again.'
-        );
+        toast.error('Payment gateway unavailable. Please check your internet connection.');
         setLoading(false);
         return;
       }
 
-      // ----------------------------------------
-      // 2. Calculate amount in paise
-      // ----------------------------------------
-
+      // 2. Validate & Calculate Amount
       const totalAmount = Number(order.total);
-
       if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
-        alert('Invalid order amount.');
+        toast.error('Invalid order total. Please review your cart.');
         setLoading(false);
         return;
       }
 
       const amountInPaise = Math.round(totalAmount * 100);
-
       if (amountInPaise < 100) {
-        alert('Minimum payment amount is ₹1.');
+        toast.error('Minimum payment amount is ₹1.');
         setLoading(false);
         return;
       }
 
-      // ----------------------------------------
-      // 3. Create Razorpay Order
-      //    through Supabase Edge Function
-      // ----------------------------------------
+      // 3. Generate Secure Order ID via Backend
+      toast.loading('Connecting to secure payment gateway...', { id: 'payment-init' });
+      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-order', {
+        body: { amount: amountInPaise },
+      });
 
-      const { data: orderData, error: orderError } =
-        await supabase.functions.invoke('create-order', {
-          body: {
-            amount: amountInPaise,
-          },
-        });
-
-      if (orderError) {
-        console.error('Create order error:', orderError);
-        throw new Error(
-          'Unable to create payment order. Please try again.'
-        );
+      if (orderError || !orderData?.order_id) {
+        console.error('Order generation failure:', orderError);
+        toast.error('Could not start payment. Please try again.', { id: 'payment-init' });
+        setLoading(false);
+        return;
       }
+      toast.dismiss('payment-init');
 
-      if (!orderData?.order_id) {
-        console.error('Invalid order response:', orderData);
-        throw new Error(
-          'Payment order could not be created. Please try again.'
-        );
-      }
-
-      // ----------------------------------------
       // 4. Razorpay Checkout Configuration
-      // ----------------------------------------
-
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
         amount: orderData.amount,
         currency: orderData.currency || 'INR',
         order_id: orderData.order_id,
-
         name: 'Density Electronics',
-        description: `B2B Procurement Order (${order.items.length} items)`,
+        description: `Order Payment (${order.items.length} items)`,
         image: 'https://ik.imagekit.io/t2r0vhpii/headerlogo33.png',
-
+        
         prefill: {
           name: order.customer?.name || '',
           email: order.customer?.email || 'sales.densityelectronics@gmail.com',
@@ -127,55 +97,38 @@ export default function Payment() {
         },
 
         theme: {
-          color: '#ea580c',
+          color: '#1e293b', 
         },
 
         modal: {
           ondismiss: () => {
+            toast('Payment cancelled.', { icon: 'ℹ️' });
             setLoading(false);
           },
         },
 
-        // ----------------------------------------
-        // 5. Razorpay Payment Success
-        // ----------------------------------------
-
+        // 5. Success Handler
         handler: async function (response) {
           try {
             setLoading(true);
+            toast.loading('Confirming your payment...', { id: 'payment-verify' });
 
-            console.log('Razorpay payment response:', response);
+            const { data: verificationData, error: verificationError } = await supabase.functions.invoke('verify-payment', {
+              body: {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+            });
 
-            // ----------------------------------------
-            // 6. Verify payment through Supabase
-            // ----------------------------------------
-
-            const { data: verificationData, error: verificationError } =
-              await supabase.functions.invoke('verify-payment', {
-                body: {
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_signature: response.razorpay_signature,
-                },
-              });
-
-            if (verificationError) {
-              console.error('Payment verification error:', verificationError);
-              throw new Error(
-                'Payment verification failed. Please contact support before trying again.'
-              );
+            if (verificationError || !verificationData?.success) {
+              console.error('Signature mismatch:', verificationError);
+              throw new Error('Payment confirmation failed. Please contact support.');
             }
 
-            if (!verificationData?.success) {
-              throw new Error(
-                'Payment could not be verified. Please contact support.'
-              );
-            }
+            toast.success('Payment successful!', { id: 'payment-verify' });
 
-            // ----------------------------------------
-            // 7. Only NOW mark the order as PAID
-            // ----------------------------------------
-
+            // 6. Route to success page
             navigate('/order-ready', {
               state: {
                 ...order,
@@ -185,129 +138,125 @@ export default function Payment() {
               },
             });
           } catch (error) {
-            console.error('Payment verification failed:', error);
-            alert(
-              error.message ||
-                'Payment verification failed. Please contact support.'
-            );
+            toast.error(error.message || 'Payment confirmation failed. Please contact support.', { id: 'payment-verify' });
             setLoading(false);
           }
         },
       };
 
-      // ----------------------------------------
-      // 8. Open Razorpay
-      // ----------------------------------------
-
       const paymentObject = new window.Razorpay(options);
 
-      // Handle payment.failed event
       paymentObject.on('payment.failed', function (response) {
-        console.error('Razorpay payment failed:', response);
-        alert(
-          response?.error?.description || 'Payment failed. Please try again.'
-        );
+        console.error('Gateway rejection:', response);
+        toast.error(response?.error?.description || 'Payment was declined by the bank.');
         setLoading(false);
       });
 
       paymentObject.open();
     } catch (error) {
-      console.error('Payment initialization error:', error);
-      alert(
-        error.message || 'Unable to initialize payment. Please try again.'
-      );
+      console.error('Initialization fault:', error);
+      toast.error('Unable to open payment window. Please try again.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen font-sans flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden animate-fade-in">
+    <div className="bg-slate-50 min-h-screen font-sans pb-24 pt-6 sm:pt-10">
+      <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header Area */}
-        <div className="bg-[#1e293b] p-8 text-center relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ea580c_1px,transparent_1px)] [background-size:16px_16px]" />
-
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="bg-orange-500/20 text-orange-400 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 border border-orange-500/30 shadow-inner">
-              <Lock size={32} />
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-black mb-1 text-white tracking-tight uppercase">
-              Secure Payment
+        {/* Navigation */}
+        <div className="mb-8 border-b border-gray-200 pb-5">
+          <button 
+            onClick={() => navigate(-1)}
+            disabled={loading}
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 text-xs font-black uppercase tracking-widest transition-colors mb-4 disabled:opacity-50"
+          >
+            <ArrowLeft size={16} strokeWidth={3} /> Back to Checkout
+          </button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">
+              Complete Payment
             </h1>
-
-            <p className="text-gray-400 font-medium text-sm">
-              Complete your procurement via Razorpay
-            </p>
+            <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-sm shadow-sm">
+              <ShieldCheck size={16} /> 100% Secure Checkout
+            </div>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="p-8">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-8 space-y-3">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">
-                Billed To
-              </span>
-              <span className="font-black text-[#1e293b]">
-                {order.customer?.name}
-              </span>
+        {/* Clean Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          
+          {/* Left Column: Summary */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-slate-100 px-6 py-4 border-b border-gray-200 flex items-center gap-2.5">
+              <Receipt size={20} className="text-slate-600" />
+              <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">Order Summary</h2>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-500 font-bold">Billed To:</span>
+                <span className="font-black text-slate-900">{order.customer?.companyName || order.customer?.name}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-500 font-bold">Items Count:</span>
+                <span className="font-black text-slate-900">{order.items?.length} Products</span>
+              </div>
+              <div className="flex justify-between items-center text-sm border-t border-gray-100 pt-3">
+                <span className="text-gray-500 font-bold">Delivery Location:</span>
+                <span className="font-bold text-slate-700">{order.customer?.city}, {order.customer?.state}</span>
+              </div>
             </div>
 
-            <div className="flex justify-between items-center text-sm border-t border-gray-200 pt-3">
-              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">
-                Contact
-              </span>
-              <span className="font-black text-[#1e293b]">
-                +91 {order.customer?.phone}
-              </span>
+            <div className="bg-slate-900 p-6 flex justify-between items-end text-white">
+              <div>
+                <span className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Amount to Pay</span>
+                <span className="text-3xl font-black tracking-tight text-orange-400">₹{Number(order.total).toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Payment Trigger Box */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sm:p-8 space-y-6">
+            <div>
+              <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-2">
+                Pay Online Securely
+              </h2>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                Click below to open our secure payment window. You can pay using <span className="text-slate-900 font-bold">UPI, Netbanking, Credit/Debit Card, or Wallets</span>.
+              </p>
             </div>
 
-            <div className="flex justify-between items-center text-sm border-t border-gray-200 pt-3">
-              <span className="text-gray-500 font-bold uppercase tracking-wider text-[11px]">
-                Payable Amount
-              </span>
-              <span className="font-black text-orange-600 text-lg tracking-tight">
-                ₹{Number(order.total).toFixed(2)}
-              </span>
+            <button
+              onClick={handleOnlinePayment}
+              disabled={loading}
+              className={`w-full h-14 font-black text-sm uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md ${
+                loading
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                  : 'bg-orange-600 hover:bg-orange-500 text-white active:scale-95 shadow-orange-600/30'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} /> Opening Secure Window...
+                </>
+              ) : (
+                <>
+                  <CreditCard size={18} /> Proceed to Pay ₹{Number(order.total).toFixed(2)}
+                </>
+              )}
+            </button>
+
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                <CheckCircle2 size={14} className="text-emerald-500" /> Instant Payment Confirmation
+              </div>
+              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                <CheckCircle2 size={14} className="text-emerald-500" /> GST Tax Invoice sent via Email
+              </div>
             </div>
           </div>
 
-          {/* Payment Button */}
-          <button
-            onClick={handleOnlinePayment}
-            disabled={loading}
-            className={`w-full font-black text-sm uppercase tracking-widest py-4 rounded-sm shadow-md flex justify-center items-center gap-3 transition-all ${
-              loading
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-orange-600 text-white hover:bg-orange-500 hover:-translate-y-0.5 active:scale-95'
-            }`}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={20} />
-                Initializing Gateway...
-              </>
-            ) : (
-              <>
-                <CreditCard size={20} />
-                Pay Money Securely
-                <ArrowRight size={18} />
-              </>
-            )}
-          </button>
-
-          <div className="mt-6 flex flex-col items-center justify-center gap-2">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
-              <ShieldCheck size={14} className="text-emerald-500" />
-              256-Bit Encrypted Gateway
-            </div>
-
-            <div className="text-[10px] text-gray-400 font-medium">
-              Accepts UPI, Cards, Netbanking & Wallets
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -86,19 +86,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 lg:gap-8">
           
           {/* Brand & Mission */}
-          <div className="lg:col-span-2 space-y-6">
-            <Link to="/" className="inline-flex items-center gap-3">
-              <span className="h-12 w-12 rounded bg-orange-600 flex items-center justify-center font-black text-white text-2xl shadow-sm">
-                D
-              </span>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black tracking-tighter text-white leading-none">
-                  DENSITY
-                </span>
-                <span className="text-xs font-bold text-gray-400 tracking-[0.2em] uppercase mt-1">
-                  Electronics
-                </span>
-              </div>
+        <div className="lg:col-span-2 space-y-6">
+            <Link to="/" className="inline-flex items-center">
+              <img
+                src="src/assets/headerlogo33.png"
+                alt="Density Electronics Logo"
+                className="h-12 sm:h-16 w-auto object-contain"
+              />
             </Link>
 
             <p className="text-sm leading-relaxed text-gray-400 font-medium max-w-sm">
@@ -112,7 +106,6 @@ export default function Footer() {
               </span>
             </div>
           </div>
-
           {/* Quick Hardware Catalog */}
           <div className="space-y-5">
             <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-gray-800 pb-3">

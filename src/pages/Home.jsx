@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight, ChevronLeft, ChevronRight, Star,
-  Heart, ShieldCheck, HelpCircle, Cpu, FileText, CheckCircle2,
-  Check, Download, Zap, Truck, Headphones, Building2, ShoppingCart, CloudUpload
+  ShieldCheck, HelpCircle, Cpu, FileText, CheckCircle2,
+  Zap, Truck, Headphones, Building2, ShoppingCart
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -49,7 +49,6 @@ const FadeInSection = ({ children, delay = 0, className = "" }) => {
 export default function Home() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const [wishlist, setWishlist] = useState({});
   const [addedIds, setAddedIds] = useState({});
 
   const handleAddToCart = (product) => {
@@ -59,10 +58,6 @@ export default function Home() {
     setTimeout(() => {
       setAddedIds((prev) => ({ ...prev, [product.id]: false }));
     }, 1200);
-  };
-
-  const toggleWishlist = (id) => {
-    setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const featuredCatalog = products.slice(0, 8);
@@ -92,23 +87,31 @@ export default function Home() {
   const handleNextSlide = () => setCarouselIndex((prev) => Math.min(maxIndex, prev + 1));
 
   const categoryImages = {
-    "Development Board": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200",
-    "Sensor": "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&q=80&w=1200",
-    "Display": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200",
-    "Motors": "https://wallpapercave.com/wp/wp8825915.jpg",
-    "Power": "https://images.unsplash.com/photo-1611117775350-ac3950990985?auto=format&fit=crop&q=80&w=1200",
-    "Wireless": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200",
-    "Cellular": "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&q=80&w=1200",
-    "RF Antenna": "https://images.unsplash.com/photo-1563207153-f403bf289096?auto=format&fit=crop&q=80&w=1200",
-    "Memory": "https://images.hdqwalls.com/wallpapers/random-access-memory.jpg",
-    "Supplier Brand": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200",
-    "Robotics Project": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200",
-    "Tools & Soldering": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1200",
-    "Wiring & Breadboards": "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=1200",
-    "Motor Drivers": "https://images.unsplash.com/photo-1608564697071-ddf911d81370?auto=format&fit=crop&q=80&w=1200",
-    "Batteries & Power Management": "https://tse2.mm.bing.net/th/id/OIP.1QBu0WAQ72oPNGtpXVV50QAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+    "Development Board": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFeW8_20BFoGdkyS0C6XobAQg704sqi4c0B1ZrcW4xw&s=10",
+    "Development Boards": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFeW8_20BFoGdkyS0C6XobAQg704sqi4c0B1ZrcW4xw&s=10",
+    "Sensor": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ksx4UotHos3YYhN7YUWUUwPSsv0OJ8tlkK_flXQ-ow&s=10",
+    "Sensor Modules": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ksx4UotHos3YYhN7YUWUUwPSsv0OJ8tlkK_flXQ-ow&s=10",
+    "Display": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr7KtNvZ0YMCvTTfn-EOZgoAiV6s6KxEHqp2rWf2nfVQ&s=10",
+    "Motors": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-HJdT2TWLcgLRkn5ebbVVG5g9uOPqHWegLLHM86_gQ&s=10",
+    "Power": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm7ZknwPCQ_Pk8ay0tZQPqQovb7hz-zEqm6AEVlSoSlQ&s=10",
+    "Wireless": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5vKXeylmE575Iw8HKkgI9fICfXgbpqTgUyOA0a0mzRQ&s=10",
+    "Cellular": "https://img.freepik.com/premium-photo/closeup-view-cell-phones-circuit-board-revealing-intricate-electronic-components-glimpse-into-world-smartphone-repair_248459-33198.jpg?w=2000",
+    "RF Antenna": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqWAxI2H3YEo5RXosWDj7u9X8Nvp56DPabBTFdTwrxSw&s",
+    "Memory": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlXQwcopzeUCuusX8vYXzl198sUyUihDQwke9AeFvOBA&s=10",
+    "Supplier Brand": "https://ecdn6.globalso.com/upload/p/1355/source/2024-11/673c3a82ae33158189.jpg",
+    "Robotics Project": "https://robocraze.com/cdn/shop/files/1_2d942dd3-06ad-45b4-9616-3d65740ab851_1000x.png?v=1754484573",
+    "Robotics Project Kits": "https://robocraze.com/cdn/shop/files/1_2d942dd3-06ad-45b4-9616-3d65740ab851_1000x.png?v=1754484573",
+    "Tools & Soldering": "https://thumbs.dreamstime.com/b/soldering-electronic-components-onto-pcb-electronics-repair-digital-technology-257617553.jpg",
+    "Wiring & Breadboards": "https://sfxpcb.com/wp-content/uploads/2023/09/Breadboard-600x450.jpg",
+    "Motor Drivers": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_HGhFP9FJd8yLB_ts_JXAWpngRICqilcmGK96Ef9xLQ&s=10",
+    "Batteries & Power Management": "https://cdn.ecommercedns.uk/files/2/258392/3/40138273/inr18650-2000mah-li-ion-batteyr.jpg",
+    "Electronic Components": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrcd0m0eDdnF4FUHmmFQufxW1vQGQE_3VmA6mKGXBLZQ&s=10",
+    "Relays": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb1okbObI1bpuQDZxI3UPtRQlHn4SHO1Zd5p6V8N0JCg&s=10",
+    "3D Printing": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe9srv-6Ei8eeA0g0p6-ZAoTquKRQ2p7tVM--ZyO11BQ&s=10",
+    "Module": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQshl5oRd5kpr4V2_XWWvysuiqfhV2p3PWs9n63SGWuVg&s=10",
+    "Mechanical Equipments": "https://content.misumi-ec.com/image/upload/t_product_main/v1/p/cn/product/series/110310971639/110310971639_20240123141158.jpg",
+    "Camera Modules": "https://tse3.mm.bing.net/th/id/OIP.jWcPgfkAfksilzRyzNqSiwHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
   };
-
   const brands = [
     { name: "DWIN", logo: "https://www.stoneitech.com/wp-content/uploads/2022/06/cropped-%E5%85%AC%E5%8F%B8Logo-300x100-1-131x44.jpg" },
     { name: "SONYTEK", logo: "https://sonytech.in/Final%20Logo.png" },
@@ -120,7 +123,6 @@ export default function Home() {
   ];
 
   const HeavyProductCard = ({ product }) => {
-    const isWishlisted = !!wishlist[product.id];
     const isAdded = !!addedIds[product.id];
     const isOutOfStock = product.stock === 0;
 
@@ -162,16 +164,9 @@ export default function Home() {
 
             <div className="flex gap-2">
               <button
-                onClick={() => toggleWishlist(product.id)}
-                className="w-11 h-11 sm:w-10 sm:h-10 border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all cursor-pointer bg-white shrink-0"
-                aria-label="Add to wishlist"
-              >
-                <Heart size={18} className={`transition-colors duration-200 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
-              </button>
-              <button
                 disabled={isOutOfStock}
                 onClick={() => handleAddToCart(product)}
-                className={`flex-1 text-[11px] font-bold uppercase tracking-wider h-11 sm:h-10 rounded-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center cursor-pointer ${isOutOfStock
+                className={`w-full text-[11px] font-bold uppercase tracking-wider h-11 sm:h-10 rounded-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center cursor-pointer ${isOutOfStock
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : isAdded
                     ? 'bg-emerald-500 text-white shadow-emerald-500/30 shadow-lg'
@@ -226,8 +221,8 @@ export default function Home() {
   return (
     <div className="w-full bg-[#f8fafc] font-sans pb-16 overflow-x-hidden">
 
-      {/* 1. HERO SECTION (Proper Mobile Hierarchy) */}
-      <section className="relative w-full h-[100vh] sm:h-[70vh] min-h-[500px] flex items-center overflow-hidden bg-[#050b1a]">
+      {/* 1. HERO SECTION (100dvh on mobile, 70vh on desktop) */}
+      <section className="relative w-full h-[50dvh] lg:h-[70vh] min-h-[500px] flex items-center overflow-hidden bg-[#050b1a]">
         {heroSlides.map((slide, index) => (
           <div
             key={index}
@@ -246,10 +241,10 @@ export default function Home() {
           <div className="absolute w-[600px] h-[3px] bg-gradient-to-r from-transparent via-[#f59e0b]/60 to-[#f59e0b]/60 rotate-[-38deg] bottom-14 right-0 opacity-70"></div>
         </div>
 
-        {/* Adjusted Container for Proper Mobile Spacing */}
-        <div className="relative z-20 max-w-[1500px] mx-auto px-5 sm:px-10 lg:px-16 w-full flex flex-col justify-center h-full pt-10 sm:pt-0">
-          <div className="w-full sm:w-[85%] lg:w-[60%] flex flex-col text-left">
-            <div className="relative w-full min-h-[220px] sm:min-h-[200px] mb-6 sm:mb-8">
+        {/* Centered on mobile, left-aligned on desktop */}
+        <div className="relative z-20 max-w-[1500px] mx-auto px-5 sm:px-10 lg:px-16 w-full flex flex-col justify-center items-center lg:items-start h-full pt-10 sm:pt-0">
+          <div className="w-full sm:w-[90%] lg:w-[60%] flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="relative w-full min-h-[240px] sm:min-h-[200px] mb-6 sm:mb-8">
               {heroSlides.map((slide, index) => (
                 <div
                   key={index}
@@ -258,31 +253,26 @@ export default function Home() {
                     : 'opacity-0 translate-y-4 pointer-events-none'
                     }`}
                 >
-                  <div className="text-emerald-400 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center justify-start">
+                  <div className="text-emerald-400 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center justify-center lg:justify-start">
                     {slide.eyebrow}
                   </div>
 
-                  {/* Refined Mobile Typography - Removed whitespace-nowrap, Adjusted sizing/line-height */}
-                  <h1 className="text-[34px] leading-[1.15] sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 sm:mb-5 drop-shadow-lg">
+                  <h1 className="text-[38px] leading-[1.15] sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 sm:mb-5 drop-shadow-lg">
                     {slide.titleLine1}<br className="hidden sm:block" />
                     <span className="text-[#ffb700] drop-shadow-md">{slide.titleLine2}</span> <span className="text-[#ffb700] drop-shadow-md">{slide.titleLine3}</span>
                   </h1>
 
-                  <p className="text-gray-300 text-[14px] sm:text-[15px] lg:text-base leading-relaxed max-w-lg font-medium drop-shadow pr-4 sm:pr-0">
+                  <p className="text-gray-300 text-[14px] sm:text-[15px] lg:text-base leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium drop-shadow pr-4 sm:pr-0">
                     {slide.desc}
                   </p>
                 </div>
               ))}
             </div>
 
-            {/* Accessible Mobile Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 relative z-30 w-full sm:w-auto mt-2">
-              <Link to="/shop" className="w-full sm:w-auto justify-center bg-[#ffb700] hover:bg-[#e6a300] text-black px-6 py-4 sm:px-8 sm:py-3.5 rounded-full font-black text-[13px] sm:text-[14px] uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(255,183,0,0.3)] min-h-[46px]">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 relative z-30 w-full sm:w-auto mt-6 lg:mt-2">
+              <Link to="/shop" className="w-full sm:w-auto justify-center bg-[#ffb700] hover:bg-[#e6a300] text-black px-6 py-4 sm:px-8 sm:py-3.5 rounded-full font-black text-[14px] uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(255,183,0,0.3)] min-h-[50px]">
                 <ShoppingCart size={18} strokeWidth={2.5} /> SHOP NOW <ChevronRight size={16} strokeWidth={3} className="ml-1" />
               </Link>
-              {/* <Link to="/bulk" className="w-full sm:w-auto justify-center bg-transparent border-2 border-white text-white px-6 py-4 sm:px-8 sm:py-3.5 rounded-full font-bold text-[13px] sm:text-[14px] uppercase tracking-wide hover:bg-white hover:text-black transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 min-h-[46px]">
-                <CloudUpload size={18} strokeWidth={2} /> UPLOAD BOM
-              </Link> */}
             </div>
           </div>
         </div>
