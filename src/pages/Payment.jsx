@@ -74,7 +74,8 @@ export default function Payment() {
 
       if (orderError || !orderData?.order_id) {
         console.error('Order generation failure:', orderError);
-        toast.error('Could not start payment. Please try again.', { id: 'payment-init' });
+        const functionMessage = orderError?.context?.error?.error || orderError?.message;
+        toast.error(functionMessage || 'Could not start payment. Please try again.', { id: 'payment-init' });
         setLoading(false);
         return;
       }

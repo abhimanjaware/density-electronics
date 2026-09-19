@@ -59,3 +59,18 @@ body {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- PDF Print Formatting --- */
+@media print {
+  body {
+    background-color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Hides the URL and timestamp headers the browser adds to PDFs */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+}

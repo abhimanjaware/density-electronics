@@ -1,6 +1,7 @@
 import { Plus, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import densityLogo from '../assets/headerlogo.png';
 
 export default function ProductCard({ product }) {
   const { cartItems, addToCart, updateQuantity } = useCart();
@@ -43,7 +44,7 @@ export default function ProductCard({ product }) {
         {/* Density Electronics Logo Overlay (Top Right) */}
         <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm border border-gray-200">
           <img 
-            src="/src/assets/headerlogo.png" 
+            src={densityLogo}
             alt="Density Electronics" 
             className="w-5 h-5 object-contain"
           />

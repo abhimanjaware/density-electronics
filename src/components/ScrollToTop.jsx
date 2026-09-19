@@ -5,8 +5,8 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Uses 'auto' instead of 'smooth' for instant page transitions
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    // Instantly scroll to the top left corner whenever the URL changes
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;

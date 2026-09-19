@@ -348,7 +348,7 @@ export default function Home() {
                   className="flex-shrink-0 flex items-center justify-center w-[140px] sm:w-[200px] h-16 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
                 >
                   <img
-                    src={brand.logo}
+                    src={logo}
                     alt={brand.name}
                     loading="lazy"
                     className="max-h-8 sm:max-h-12 max-w-[100px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"

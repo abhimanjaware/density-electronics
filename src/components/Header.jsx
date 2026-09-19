@@ -1,10 +1,52 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  Search, ChevronDown, ShoppingCart, Menu, X, ChevronRight 
+  Search, ChevronDown, ShoppingCart, Menu, X, ChevronRight
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { products, categories } from '../data/products';
+import logo from '../assets/headerlogo33.png';
+
+const socialLinks = [
+  {
+    label: 'Instagram',
+    href: '#',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="4"></circle>
+        <circle cx="17.5" cy="6.5" r="1"></circle>
+      </svg>
+    )
+  },
+  {
+    label: 'Facebook',
+    href: '#',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+        <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V7.3c0-.9.3-1.6 1.7-1.6H17V2.7c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.3V10.8H8v3.2h2.5v8h3Z" />
+      </svg>
+    )
+  },
+  {
+    label: 'LinkedIn',
+    href: '#',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+        <path d="M6.94 8.5A1.56 1.56 0 1 1 6.94 5.4a1.56 1.56 0 0 1 0 3.1ZM5.5 9.8h2.9v9.7H5.5V9.8Zm5.2 0h2.8v1.3h.1c.4-.7 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.7v5.2h-2.9v-4.8c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6v4.9h-2.9V9.8Z" />
+      </svg>
+    )
+  },
+  {
+    label: 'Twitter',
+    href: '#',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+        <path d="M18.9 2.5c-1 .5-2 .8-3.1 1.1A4.7 4.7 0 0 0 12.3 6v.4A10.8 10.8 0 0 1 3.8 3.9s-2.3 5.1 1.4 7.5a9.4 9.4 0 0 1-1.5.2c.4 1.8 2 3.2 4 3.6A9.7 9.7 0 0 1 2 18.7c2.7 1.8 6 2.2 9.2 1.2a13.5 13.5 0 0 0 9.4-9.1c.9-2.1.9-3.4.9-3.4s-.8.4-1.6.7Z" />
+      </svg>
+    )
+  }
+];
 
 export default function Header() {
   const { cartItems } = useCart();
@@ -102,7 +144,7 @@ export default function Header() {
         <div className="flex items-center justify-between w-full lg:w-auto">
           <Link to="/" className="flex items-center flex-shrink-0 z-40">
             <img
-              src="src/assets/headerlogo33.png"
+              src={logo}
               alt="Density Logo"
               className="h-14 lg:h-14 w-auto object-contain"
             />
@@ -172,13 +214,18 @@ export default function Header() {
 
         {/* Right Action Icons (Desktop) */}
         <div className="hidden lg:flex items-center gap-6 xl:gap-8 flex-shrink-0 text-gray-200 z-40">
-          <div className="flex items-center gap-4 text-gray-400">
-            <a href="#" className="hover:text-[#ffb700] transition-colors" title="LinkedIn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            </a>
-            <a href="#" className="hover:text-[#ffb700] transition-colors" title="Twitter/X">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-            </a>
+          <div className="flex items-center gap-3 text-gray-400">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                className="w-8 h-8 rounded bg-[#1e293b] border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-orange-600 hover:border-orange-600 transition-colors"
+                title={social.label}
+                aria-label={social.label}
+              >
+                {social.icon}
+              </a>
+            ))}
           </div>
 
           <div className="h-6 w-[1px] bg-gray-700"></div>
