@@ -158,18 +158,15 @@ export default function Shop() {
 
                   {/* Maximized Image Wrapper */}
                   <div className="relative h-48 sm:h-56 w-full p-3 flex items-center justify-center bg-white border-b border-gray-200 shrink-0">
-                    
-                    {/* Density Electronics Logo Overlay (Top Right) */}
-                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm border border-gray-200 z-10 p-1">
-                      <img 
-                        src={stampImg} 
-                        alt="Density Electronics" 
-                        className="w-7 h-7 sm:w-9 sm:h-9 object-contain"
-                      />
-                    </div>
+                    <img 
+                      src={stampImg} 
+                      alt="Density Electronics" 
+                      loading="lazy"
+                      className="absolute top-2 right-2 w-7 h-7 sm:w-9 sm:h-9 object-contain drop-shadow-[0_4px_12px_rgba(15,23,42,0.12)] z-10"
+                    />
 
                     <Link to={`/product/${product.slug}`} className="w-full h-full flex items-center justify-center">
-                      <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                      <img src={product.image} alt={product.name} loading="lazy" fetchPriority="low" className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 will-change-transform" />
                     </Link>
                   </div>
 

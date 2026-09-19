@@ -10,7 +10,7 @@ import logo from '../assets/headerlogo33.png';
 const socialLinks = [
   {
     label: 'Instagram',
-    href: '#',
+    href: 'https://www.instagram.com/_density_electronics?stkn=MW41ZjI2cncwaTQxYg==',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -20,29 +20,20 @@ const socialLinks = [
     )
   },
   {
-    label: 'Facebook',
-    href: '#',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
-        <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V7.3c0-.9.3-1.6 1.7-1.6H17V2.7c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.3V10.8H8v3.2h2.5v8h3Z" />
-      </svg>
-    )
-  },
-  {
-    label: 'LinkedIn',
-    href: '#',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
-        <path d="M6.94 8.5A1.56 1.56 0 1 1 6.94 5.4a1.56 1.56 0 0 1 0 3.1ZM5.5 9.8h2.9v9.7H5.5V9.8Zm5.2 0h2.8v1.3h.1c.4-.7 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.7v5.2h-2.9v-4.8c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6v4.9h-2.9V9.8Z" />
-      </svg>
-    )
-  },
-  {
-    label: 'Twitter',
-    href: '#',
+    label: 'X',
+    href: 'https://x.com/densityelectro?s=11',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
         <path d="M18.9 2.5c-1 .5-2 .8-3.1 1.1A4.7 4.7 0 0 0 12.3 6v.4A10.8 10.8 0 0 1 3.8 3.9s-2.3 5.1 1.4 7.5a9.4 9.4 0 0 1-1.5.2c.4 1.8 2 3.2 4 3.6A9.7 9.7 0 0 1 2 18.7c2.7 1.8 6 2.2 9.2 1.2a13.5 13.5 0 0 0 9.4-9.1c.9-2.1.9-3.4.9-3.4s-.8.4-1.6.7Z" />
+      </svg>
+    )
+  },
+  {
+    label: 'WhatsApp',
+    href: 'https://wa.me/919890400165',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+        <path d="M20.52 3.48A11.7 11.7 0 0 0 12.2 1a11.8 11.8 0 0 0-10.2 18l-1 3.7 3.8-1A11.8 11.8 0 0 0 12.22 23c6.5 0 11.8-5.3 11.8-11.8 0-3.1-1.2-6.1-3.48-8.72ZM12.2 21.1a9.7 9.7 0 0 1-5.1-1.4l-.36-.22-2.26.6.6-2.2-.23-.36A9.7 9.7 0 0 1 2.5 11.8a9.8 9.8 0 0 1 19.6 0 9.8 9.8 0 0 1-9.9 9.3Zm5.4-7.2c-.3-.15-1.7-.83-2-.93-.3-.1-.52-.15-.74.15-.22.3-.82.92-.99 1.1-.18.18-.36.2-.68.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.38-.02-.52-.08-.15-.74-1.8-.99-2.46-.26-.65-.52-.57-.72-.58l-.62-.01c-.21 0-.55.08-.84.38-.29.3-1.1 1.08-1.1 2.63s1.12 3.04 1.28 3.25c.15.2 2.2 3.36 5.34 4.7.75.32 1.33.52 1.79.66.75.24 1.43.2 1.97.12.6-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.18-1.43-.07-.13-.27-.22-.57-.38Z" />
       </svg>
     )
   }
@@ -135,6 +126,17 @@ export default function Header() {
     }
   };
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    navigate('/');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+  };
+
   return (
     <header className="w-full font-sans sticky top-0 z-50 shadow-2xl bg-[#050b14]">
       {/* 1. TOP MAIN HEADER */}
@@ -142,13 +144,13 @@ export default function Header() {
         
         {/* Top Row: Logo & Mobile Icons */}
         <div className="flex items-center justify-between w-full lg:w-auto">
-          <Link to="/" className="flex items-center flex-shrink-0 z-40">
+          <a href="/" onClick={handleLogoClick} className="flex items-center flex-shrink-0 z-40">
             <img
               src={logo}
               alt="Density Logo"
               className="h-14 lg:h-14 w-auto object-contain"
             />
-          </Link>
+          </a>
 
           {/* Right Action Icons (Mobile) */}
           <div className="flex items-center gap-5 text-gray-200 z-40 lg:hidden">
@@ -179,7 +181,7 @@ export default function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
-              placeholder="Search all 180 components by Part Number..."
+              placeholder="Search"
               className="w-full text-[14px] text-gray-900 placeholder-gray-500 focus:outline-none bg-transparent px-4 font-medium h-full"
             />
             <button
@@ -219,6 +221,8 @@ export default function Header() {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noreferrer"
                 className="w-8 h-8 rounded bg-[#1e293b] border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-orange-600 hover:border-orange-600 transition-colors"
                 title={social.label}
                 aria-label={social.label}

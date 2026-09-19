@@ -12,8 +12,6 @@ import heroBg1 from '../assets/bg2.png';
 import heroBg2 from '../assets/bg1.png';
 import heroBg3 from '../assets/bg3.png';
 
-import logo from '../assets/headerlogo33.png';
-
 // 1. FAST NATIVE SCROLL ANIMATION
 const FadeInSection = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setVisible] = useState(false);
@@ -88,32 +86,33 @@ export default function Home() {
   const handlePrevSlide = () => setCarouselIndex((prev) => Math.max(0, prev - 1));
   const handleNextSlide = () => setCarouselIndex((prev) => Math.min(maxIndex, prev + 1));
 
-  const categoryImages = {
-    "Development Board": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFeW8_20BFoGdkyS0C6XobAQg704sqi4c0B1ZrcW4xw&s=10",
-    "Development Boards": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFeW8_20BFoGdkyS0C6XobAQg704sqi4c0B1ZrcW4xw&s=10",
-    "Sensor": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ksx4UotHos3YYhN7YUWUUwPSsv0OJ8tlkK_flXQ-ow&s=10",
-    "Sensor Modules": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ksx4UotHos3YYhN7YUWUUwPSsv0OJ8tlkK_flXQ-ow&s=10",
-    "Display": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr7KtNvZ0YMCvTTfn-EOZgoAiV6s6KxEHqp2rWf2nfVQ&s=10",
-    "Motors": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-HJdT2TWLcgLRkn5ebbVVG5g9uOPqHWegLLHM86_gQ&s=10",
-    "Power": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm7ZknwPCQ_Pk8ay0tZQPqQovb7hz-zEqm6AEVlSoSlQ&s=10",
-    "Wireless": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5vKXeylmE575Iw8HKkgI9fICfXgbpqTgUyOA0a0mzRQ&s=10",
-    "Cellular": "https://img.freepik.com/premium-photo/closeup-view-cell-phones-circuit-board-revealing-intricate-electronic-components-glimpse-into-world-smartphone-repair_248459-33198.jpg?w=2000",
-    "RF Antenna": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqWAxI2H3YEo5RXosWDj7u9X8Nvp56DPabBTFdTwrxSw&s",
-    "Memory": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlXQwcopzeUCuusX8vYXzl198sUyUihDQwke9AeFvOBA&s=10",
-    "Supplier Brand": "https://ecdn6.globalso.com/upload/p/1355/source/2024-11/673c3a82ae33158189.jpg",
-    "Robotics Project": "https://robocraze.com/cdn/shop/files/1_2d942dd3-06ad-45b4-9616-3d65740ab851_1000x.png?v=1754484573",
-    "Robotics Project Kits": "https://robocraze.com/cdn/shop/files/1_2d942dd3-06ad-45b4-9616-3d65740ab851_1000x.png?v=1754484573",
-    "Tools & Soldering": "https://thumbs.dreamstime.com/b/soldering-electronic-components-onto-pcb-electronics-repair-digital-technology-257617553.jpg",
-    "Wiring & Breadboards": "https://sfxpcb.com/wp-content/uploads/2023/09/Breadboard-600x450.jpg",
-    "Motor Drivers": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_HGhFP9FJd8yLB_ts_JXAWpngRICqilcmGK96Ef9xLQ&s=10",
-    "Batteries & Power Management": "https://cdn.ecommercedns.uk/files/2/258392/3/40138273/inr18650-2000mah-li-ion-batteyr.jpg",
-    "Electronic Components": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrcd0m0eDdnF4FUHmmFQufxW1vQGQE_3VmA6mKGXBLZQ&s=10",
-    "Relays": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb1okbObI1bpuQDZxI3UPtRQlHn4SHO1Zd5p6V8N0JCg&s=10",
-    "3D Printing": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe9srv-6Ei8eeA0g0p6-ZAoTquKRQ2p7tVM--ZyO11BQ&s=10",
-    "Module": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQshl5oRd5kpr4V2_XWWvysuiqfhV2p3PWs9n63SGWuVg&s=10",
-    "Mechanical Equipments": "https://content.misumi-ec.com/image/upload/t_product_main/v1/p/cn/product/series/110310971639/110310971639_20240123141158.jpg",
-    "Camera Modules": "https://tse3.mm.bing.net/th/id/OIP.jWcPgfkAfksilzRyzNqSiwHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-  };
+ const categoryImages = {
+  "Development Boards": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/images/766/NUCLEO-F401RE.JPG?hidebanner=true",
+  "Sensor": "https://images.unsplash.com/photo-1595692682118-774e5182f484?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "Sensor Modules": "https://images.unsplash.com/photo-1595692682118-774e5182f484?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "Display": "https://quartzcomponents.com/cdn/shop/products/OLEDDisplay0.96InchI2CInterface4PinBlueSSD1306.jpg?v=1698321495",
+  "Motors": "https://robu.in/_next/image/?url=https%3A%2F%2Frobu-prod-media.s3.ap-south-1.amazonaws.com%2Fuploads%2F2016%2F05%2FNEMA17-4.2-kg-cm-Stepper-Motor.png&w=1920&q=90",
+  "Power": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm7ZknwPCQ_Pk8ay0tZQPqQovb7hz-zEqm6AEVlSoSlQ&s=10",
+  "Wireless": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5vKXeylmE575Iw8HKkgI9fICfXgbpqTgUyOA0a0mzRQ&s=10",
+  "Cellular": "https://img.freepik.com/premium-photo/closeup-view-cell-phones-circuit-board-revealing-intricate-electronic-components-glimpse-into-world-smartphone-repair_248459-33198.jpg?w=2000",
+  "RF Antenna": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqWAxI2H3YEo5RXosWDj7u9X8Nvp56DPabBTFdTwrxSw&s",
+  "Memory": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlXQwcopzeUCuusX8vYXzl198sUyUihDQwke9AeFvOBA&s=10",
+  "Supplier Brand": "https://ecdn6.globalso.com/upload/p/1355/source/2024-11/673c3a82ae33158189.jpg",
+  "Robotics Project": "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/6/003/217/524/MFG_ROB0182_web%28640x640%29.jpg?hidebanner=true",
+  "Robotics Project Kits": "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/6/003/217/524/MFG_ROB0182_web%28640x640%29.jpg?hidebanner=true",
+  "Tools & Soldering": "https://thumbs.dreamstime.com/b/soldering-electronic-components-onto-pcb-electronics-repair-digital-technology-257617553.jpg",
+  "Wiring & Breadboards": "https://sfxpcb.com/wp-content/uploads/2023/09/Breadboard-600x450.jpg",
+  "Motor Drivers": "https://robu.in/_next/image/?url=https%3A%2F%2Frobu-prod-media.s3.ap-south-1.amazonaws.com%2Fuploads%2F2015%2F12%2F32.jpg&w=1920&q=90",
+  "Batteries & Power Management": "https://images.unsplash.com/photo-1550496923-a0e3ef948e3a?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "Electronic Components": "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/1/300/308/999/MFG_DFR0216_sml.jpg",
+  "Relays": "https://quartzcomponents.com/cdn/shop/files/12V30ASingleChannelRelayModulewithOptocouplerHigh_LowLevelTrigger_2.jpg?v=1755932707",
+  "3D Printing": "https://3dprintingperth.com/cdn/shop/products/V177-AL-MBMP07825-1_Replicator__Right_Giza_web__08720-02_2048x2048.png?v=1662006047",
+  "Module": "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/6/003/233/001/MFG_1528_6331_web%28640x640%29.jpg?hidebanner=true",
+  "Mechanical Equipments": "https://content.misumi-ec.com/image/upload/t_product_main/v1/p/cn/product/series/110310971639/110310971639_20240123141158.jpg",
+  "Camera Modules": "https://tse3.mm.bing.net/th/id/OIP.jWcPgfkAfksilzRyzNqSiwHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+};
+
+
   const brands = [
     { name: "DWIN", logo: "https://www.stoneitech.com/wp-content/uploads/2022/06/cropped-%E5%85%AC%E5%8F%B8Logo-300x100-1-131x44.jpg" },
     { name: "SONYTEK", logo: "https://sonytech.in/Final%20Logo.png" },
@@ -348,7 +347,7 @@ export default function Home() {
                   className="flex-shrink-0 flex items-center justify-center w-[140px] sm:w-[200px] h-16 sm:h-20 mx-2 sm:mx-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group px-3"
                 >
                   <img
-                    src={logo}
+                    src={brand.logo}
                     alt={brand.name}
                     loading="lazy"
                     className="max-h-8 sm:max-h-12 max-w-[100px] sm:max-w-[130px] object-contain transition-all duration-200 group-hover:grayscale group-hover:scale-105"

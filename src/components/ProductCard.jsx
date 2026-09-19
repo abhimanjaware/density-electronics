@@ -1,7 +1,7 @@
 import { Plus, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import densityLogo from '../assets/headerlogo.png';
+import stampImg from '../assets/stamp.png';
 
 export default function ProductCard({ product }) {
   const { cartItems, addToCart, updateQuantity } = useCart();
@@ -34,21 +34,20 @@ export default function ProductCard({ product }) {
         <img 
           src={product.image} 
           alt={product.name}
-          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 mix-blend-multiply"
+          loading="lazy"
+          fetchPriority="low"
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 mix-blend-multiply will-change-transform"
         />
-        {/* Category Badge overlay on image */}
-        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-[#1A1726] text-[9px] font-bold px-2 py-1.5 rounded-sm uppercase tracking-widest shadow-sm">
+        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-[#1A1726] text-[9px] font-bold px-2 py-1.5 rounded-sm uppercase tracking-widest shadow-sm z-10">
           {product.category}
         </div>
 
-        {/* Density Electronics Logo Overlay (Top Right) */}
-        <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm border border-gray-200">
-          <img 
-            src={densityLogo}
-            alt="Density Electronics" 
-            className="w-5 h-5 object-contain"
-          />
-        </div>
+        <img 
+          src={stampImg}
+          alt="Density Electronics" 
+          loading="lazy"
+          className="absolute top-2 right-2 w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-[0_4px_12px_rgba(15,23,42,0.12)] z-10"
+        />
       </Link>
 
       {/* Details Section */}

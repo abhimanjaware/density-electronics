@@ -1,28 +1,37 @@
 @import "tailwindcss";
 
 html {
-  /* Enables native smooth scrolling for anchor links */
   scroll-behavior: smooth;
-  
-  /* Hardware acceleration and crisp text rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  
-  /* Prevents layout shift on mobile when scrollbars appear */
   scrollbar-gutter: stable;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: #F3F1F9; /* Soft lavender/gray from reference */
-  color: #1A1726; /* Deep violet text */
-  
-  /* Prevents horizontal scrolling bugs globally */
+  background-color: #F3F1F9;
+  color: #1A1726;
   overflow-x: hidden;
-  
-  /* Firefox Scrollbar */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #F3F1F9;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+img,
+video,
+canvas,
+svg {
+  content-visibility: auto;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Custom Webkit Scrollbar */

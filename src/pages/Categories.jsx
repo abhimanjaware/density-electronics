@@ -10,31 +10,31 @@ export default function Categories() {
     name: "Sensor Modules",
     slug: "Sensor Modules",
     count: "38 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ksx4UotHos3YYhN7YUWUUwPSsv0OJ8tlkK_flXQ-ow&s=10"
+    img: "https://images.unsplash.com/photo-1595692682118-774e5182f484?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     name: "Electronic Components",
     slug: "Electronic Components",
     count: "18 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrcd0m0eDdnF4FUHmmFQufxW1vQGQE_3VmA6mKGXBLZQ&s=10"
+    img: "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/1/300/308/999/MFG_DFR0216_sml.jpg"
   },
   {
     name: "Development Boards",
     slug: "Development Boards",
     count: "16 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFeW8_20BFoGdkyS0C6XobAQg704sqi4c0B1ZrcW4xw&s=10"
+    img: "https://mm.digikey.com/Volume0/opasdata/d220001/medias/images/766/NUCLEO-F401RE.JPG?hidebanner=true"
   },
   {
     name: "Batteries & Power Management",
     slug: "Batteries & Power Management",
     count: "16 Products",
-    img: "https://cdn.ecommercedns.uk/files/2/258392/3/40138273/inr18650-2000mah-li-ion-batteyr.jpg"
+    img: "https://images.unsplash.com/photo-1550496923-a0e3ef948e3a?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     name: "Motors",
     slug: "Motors",
     count: "11 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-HJdT2TWLcgLRkn5ebbVVG5g9uOPqHWegLLHM86_gQ&s=10"
+    img: "https://robu.in/_next/image/?url=https%3A%2F%2Frobu-prod-media.s3.ap-south-1.amazonaws.com%2Fuploads%2F2016%2F05%2FNEMA17-4.2-kg-cm-Stepper-Motor.png&w=1920&q=90"
   },
   {
     name: "Memory",
@@ -46,31 +46,31 @@ export default function Categories() {
     name: "Display",
     slug: "Display",
     count: "7 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr7KtNvZ0YMCvTTfn-EOZgoAiV6s6KxEHqp2rWf2nfVQ&s=10"
+    img: "https://quartzcomponents.com/cdn/shop/products/OLEDDisplay0.96InchI2CInterface4PinBlueSSD1306.jpg?v=1698321495"
   },
   {
     name: "Relays",
     slug: "Relays",
     count: "7 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb1okbObI1bpuQDZxI3UPtRQlHn4SHO1Zd5p6V8N0JCg&s=10"
+    img: "https://quartzcomponents.com/cdn/shop/files/12V30ASingleChannelRelayModulewithOptocouplerHigh_LowLevelTrigger_2.jpg?v=1755932707"
   },
   {
     name: "3D Printing",
     slug: "3D Printing",
     count: "7 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe9srv-6Ei8eeA0g0p6-ZAoTquKRQ2p7tVM--ZyO11BQ&s=10"
+    img: "https://3dprintingperth.com/cdn/shop/products/V177-AL-MBMP07825-1_Replicator__Right_Giza_web__08720-02_2048x2048.png?v=1662006047"
   },
   {
     name: "Motor Drivers",
     slug: "Motor Drivers",
     count: "6 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_HGhFP9FJd8yLB_ts_JXAWpngRICqilcmGK96Ef9xLQ&s=10"
+    img: "https://robu.in/_next/image/?url=https%3A%2F%2Frobu-prod-media.s3.ap-south-1.amazonaws.com%2Fuploads%2F2015%2F12%2F32.jpg&w=1920&q=90"
   },
   {
     name: "Module",
     slug: "Module",
     count: "6 Products",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQshl5oRd5kpr4V2_XWWvysuiqfhV2p3PWs9n63SGWuVg&s=10"
+    img: "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/6/003/233/001/MFG_1528_6331_web%28640x640%29.jpg?hidebanner=true"
   },
   {
     name: "Power",
@@ -94,7 +94,7 @@ export default function Categories() {
     name: "Robotics Project Kits",
     slug: "Robotics Project Kits",
     count: "6 Products",
-    img: "https://robocraze.com/cdn/shop/files/1_2d942dd3-06ad-45b4-9616-3d65740ab851_1000x.png?v=1754484573"
+    img: "https://mm.digikey.com/Volume0/opasdata/d220001/derivates/6/003/217/524/MFG_ROB0182_web%28640x640%29.jpg?hidebanner=true"
   },
   {
     name: "Wireless",
