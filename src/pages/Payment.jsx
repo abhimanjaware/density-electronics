@@ -12,6 +12,8 @@ import {
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
+const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TdsUBPJflFH6mR';
+
 export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,9 +83,13 @@ export default function Payment() {
       }
       toast.dismiss('payment-init');
 
+      if (!razorpayKeyId) {
+        throw new Error('Payment gateway is not configured. Please contact support.');
+      }
+
       // 4. Razorpay Checkout Configuration
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
+        key: razorpayKeyId,
         amount: orderData.amount,
         currency: orderData.currency || 'INR',
         order_id: orderData.order_id,
