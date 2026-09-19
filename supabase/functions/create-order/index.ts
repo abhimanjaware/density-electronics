@@ -77,10 +77,11 @@ Deno.serve(async (req) => {
       throw new Error('Razorpay returned an invalid order response.')
     }
 
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       order_id: orderData.id,
       amount: orderData.amount,
       currency: orderData.currency,
+      key_id: keyId,
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
