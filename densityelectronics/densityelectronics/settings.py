@@ -11,19 +11,32 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# =========================================================
+# BASE DIRECTORY
+# =========================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# =========================================================
+# LOAD ENVIRONMENT VARIABLES
+# =========================================================
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d@7j1*suo&7ak6ww)-3v4lu#d%j$y28sejbjeabl##nf7_gegv'
+load_dotenv(BASE_DIR / ".env")
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
+# =========================================================
+# SECURITY
+# =========================================================
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 DEBUG = True
+
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -32,7 +45,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-# Application definition
+# =========================================================
+# APPLICATIONS
+# =========================================================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -46,6 +61,11 @@ INSTALLED_APPS = [
     "orders",
 ]
 
+
+# =========================================================
+# MIDDLEWARE
+# =========================================================
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -57,8 +77,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# =========================================================
+# URL CONFIGURATION
+# =========================================================
+
 ROOT_URLCONF = 'densityelectronics.urls'
-import os 
+
+
+# =========================================================
+# TEMPLATES
+# =========================================================
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,26 +104,33 @@ TEMPLATES = [
     },
 ]
 
+
+# =========================================================
+# WSGI
+# =========================================================
+
 WSGI_APPLICATION = 'densityelectronics.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# =========================================================
+# DATABASE
+# =========================================================
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'densityelectronics_db',
         'USER': 'root',
-        'PASSWORD': 'Milin@3724',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# =========================================================
+# PASSWORD VALIDATION
+# =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -111,8 +148,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# =========================================================
+# INTERNATIONALIZATION
+# =========================================================
 
 LANGUAGE_CODE = 'en-us'
 
@@ -123,20 +161,32 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# =========================================================
+# STATIC FILES
+# =========================================================
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+# =========================================================
+# DEFAULT PRIMARY KEY
+# =========================================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Razorpay Settings
-RAZORPAY_KEY_ID = "rzp_test_TeKOjyr7JyRwMc"
-RAZORPAY_KEY_SECRET = "Le6ATPH0BmG56pir4ZDYLdIy"  
 
+# =========================================================
+# RAZORPAY SETTINGS
+# =========================================================
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+
+
+# =========================================================
+# CORS SETTINGS
+# =========================================================
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -146,14 +196,27 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+
+# =========================================================
+# CSRF SETTINGS
+# =========================================================
+
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://10.123.30.238:5173",
 ]
 
+
+# =========================================================
+# SESSION / CSRF COOKIE SETTINGS
+# =========================================================
+
 SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False
+
 CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = False
 
 
 # =========================================================
@@ -163,18 +226,13 @@ CSRF_COOKIE_SAMESITE = "Lax"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = "smtp.gmail.com"
+
 EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "sales.densityelectronics@gmail.com"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
-EMAIL_HOST_PASSWORD = "ezfphyndrnrpynhl"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-SESSION_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SECURE = False
-
-CSRF_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SECURE = False
