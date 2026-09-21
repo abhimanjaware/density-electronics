@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "10.123.30.238",
+    "densityelectronics.onrender.com",
 ]
 
 
