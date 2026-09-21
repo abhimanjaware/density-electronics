@@ -1306,7 +1306,7 @@ function AdminDashboard() {
                 </button>
 
                 <a
-                  href="http://localhost:5173/"
+                  href="https://densityelectronics-1.onrender.com/"
                   className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition font-bold text-sm"
                 >
 
