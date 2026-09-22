@@ -6,6 +6,7 @@ from decimal import Decimal, InvalidOperation
 from email.mime.image import MIMEImage
 
 import razorpay
+import resend
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -4755,50 +4756,46 @@ Density Electronics
 """
 
 
-        email_message = EmailMultiAlternatives(
+        resend_api_key = os.getenv("RESEND_API_KEY")
 
-            subject=subject,
+        if not resend_api_key:
+            raise Exception(
+                "RESEND_API_KEY is not configured"
+            )
 
-            body=email_body,
+        resend.api_key = resend_api_key
 
-            from_email=
-                settings.DEFAULT_FROM_EMAIL,
-
-            to=[
-                email
-            ],
+        resend_from_email = os.getenv(
+            "RESEND_FROM_EMAIL",
+            "onboarding@resend.dev",
         )
 
-
-        email_message.attach_alternative(
-
-            email_html,
-
-            "text/html",
+        resend_response = resend.Emails.send(
+            {
+                "from": resend_from_email,
+                "to": [email],
+                "subject": subject,
+                "html": email_html,
+            }
         )
-
-
-        email_message.send(
-            fail_silently=False
-        )
-
 
         print(
-            "REGISTRATION OTP SENT:",
+            "REGISTRATION OTP SENT VIA RESEND:",
             email,
         )
 
+        print(
+            "RESEND RESPONSE:",
+            resend_response,
+        )
 
         return JsonResponse(
-
             {
                 "success": True,
-
                 "message":
                     "OTP sent successfully to your email",
             }
         )
-
 
     except Exception as e:
 
@@ -4807,19 +4804,14 @@ Density Electronics
             repr(e),
         )
 
-
         return JsonResponse(
-
             {
                 "success": False,
-
                 "message":
                     "Unable to send OTP",
-
                 "error":
                     str(e),
             },
-
             status=500,
         )
 
