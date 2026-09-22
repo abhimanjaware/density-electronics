@@ -1,9 +1,11 @@
 import json
+import base64
+import urllib.error
+import urllib.request
 import os
 import random
 import re
 from decimal import Decimal, InvalidOperation
-from email.mime.image import MIMEImage
 
 import razorpay
 import resend
@@ -12,7 +14,6 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.mail import EmailMultiAlternatives
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -149,6 +150,61 @@ def get_support_email():
             "",
         )
     )
+
+
+# =========================================================
+# HELPER - RESEND EMAIL
+# =========================================================
+
+def send_resend_email(to_email, subject, text, html, attachments=None):
+    """Send an email through Resend without using Django SMTP."""
+    api_key = os.getenv("RESEND_API_KEY")
+    if not api_key:
+        raise RuntimeError("RESEND_API_KEY is not configured")
+
+    from_email = os.getenv(
+        "RESEND_FROM_EMAIL",
+        "onboarding@resend.dev",
+    )
+
+    payload = {
+        "from": from_email,
+        "to": [to_email],
+        "subject": subject,
+        "text": text,
+        "html": html,
+    }
+
+    if attachments:
+        payload["attachments"] = attachments
+
+    request = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            response_body = response.read().decode("utf-8")
+    except urllib.error.HTTPError as error:
+        error_body = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"Resend HTTP {error.code}: {error_body}"
+        ) from error
+    except urllib.error.URLError as error:
+        raise RuntimeError(
+            f"Resend connection error: {error.reason}"
+        ) from error
+
+    try:
+        return json.loads(response_body or "{}")
+    except json.JSONDecodeError:
+        return {"raw_response": response_body}
 
 
 # =========================================================
@@ -1442,8 +1498,9 @@ def create_razorpay_order(request):
             )
 
 
+        # Payment.jsx sends INR. Convert to paise exactly once here.
         amount_in_paise = int(
-            amount_decimal * 100
+            (amount_decimal * 100).quantize(Decimal("1"))
         )
 
 
@@ -2639,107 +2696,50 @@ Support:
 
 
         # -------------------------------------------------
-        # SEND CUSTOMER EMAIL
+        # SEND CUSTOMER EMAIL VIA RESEND
         # -------------------------------------------------
 
         try:
+            attachments = []
 
-            customer_message = EmailMultiAlternatives(
-
-                subject=email_subject,
-
-                body=email_text,
-
-                from_email=
-                    settings.DEFAULT_FROM_EMAIL,
-
-                to=[
-                    customer_email
-                ],
-            )
-
-
-            customer_message.attach_alternative(
-
-                customer_email_html,
-
-                "text/html",
-            )
-
-
-            # Logo
-            if logo_path:
-
-                with open(
-                    logo_path,
-                    "rb",
-                ) as logo_file:
-
-                    logo_mime = MIMEImage(
+            if logo_path and os.path.exists(logo_path):
+                with open(logo_path, "rb") as logo_file:
+                    logo_content = base64.b64encode(
                         logo_file.read()
-                    )
+                    ).decode("ascii")
 
+                attachments.append({
+                    "filename": "density-electronics-logo.png",
+                    "content": logo_content,
+                    "content_id": "density_logo",
+                })
 
-                logo_mime.add_header(
-                    "Content-ID",
-                    "<density_logo>",
-                )
+            if invoice_file and os.path.exists(invoice_file):
+                with open(invoice_file, "rb") as invoice:
+                    invoice_content = base64.b64encode(
+                        invoice.read()
+                    ).decode("ascii")
 
+                attachments.append({
+                    "filename": f"{order_reference}.pdf",
+                    "content": invoice_content,
+                })
 
-                logo_mime.add_header(
-                    "Content-Disposition",
-                    "inline",
-                    filename=
-                        "density-electronics-logo.png",
-                )
-
-
-                customer_message.attach(
-                    logo_mime
-                )
-
-
-            # PDF
-            with open(
-                invoice_file,
-                "rb",
-            ) as invoice:
-
-                customer_message.attach(
-
-                    f"{order_reference}.pdf",
-
-                    invoice.read(),
-
-                    "application/pdf",
-                )
-
-
-            customer_message.send(
-                fail_silently=False
+            resend_response = send_resend_email(
+                to_email=customer_email,
+                subject=email_subject,
+                text=email_text,
+                html=customer_email_html,
+                attachments=attachments,
             )
-
 
             customer_email_sent = True
-
-
-            print(
-                "CUSTOMER EMAIL SENT:",
-                customer_email,
-            )
-
+            print("CUSTOMER EMAIL SENT VIA RESEND:", customer_email)
+            print("RESEND CUSTOMER RESPONSE:", resend_response)
 
         except Exception as email_error:
-
-            customer_email_error = str(
-                email_error
-            )
-
-            print(
-                "CUSTOMER EMAIL ERROR:",
-                repr(email_error),
-            )
-
+            customer_email_error = str(email_error)
+            print("CUSTOMER RESEND EMAIL ERROR:", repr(email_error))
 
         # =================================================
         # DENSITY / ADMIN EMAIL
@@ -3247,107 +3247,46 @@ New order notification
 
 
             try:
+                attachments = []
 
-                admin_message = (
-                    EmailMultiAlternatives(
-
-                        subject=
-                            admin_subject,
-
-                        body=
-                            admin_text,
-
-                        from_email=
-                            settings.DEFAULT_FROM_EMAIL,
-
-                        to=[
-                            admin_email
-                        ],
-                    )
-                )
-
-
-                admin_message.attach_alternative(
-
-                    admin_html,
-
-                    "text/html",
-                )
-
-
-                # Logo
-                if logo_path:
-
-                    with open(
-                        logo_path,
-                        "rb",
-                    ) as logo_file:
-
-                        admin_logo = MIMEImage(
+                if logo_path and os.path.exists(logo_path):
+                    with open(logo_path, "rb") as logo_file:
+                        logo_content = base64.b64encode(
                             logo_file.read()
-                        )
+                        ).decode("ascii")
 
+                    attachments.append({
+                        "filename": "density-electronics-logo.png",
+                        "content": logo_content,
+                        "content_id": "density_logo",
+                    })
 
-                    admin_logo.add_header(
-                        "Content-ID",
-                        "<density_logo>",
-                    )
+                if invoice_file and os.path.exists(invoice_file):
+                    with open(invoice_file, "rb") as invoice:
+                        invoice_content = base64.b64encode(
+                            invoice.read()
+                        ).decode("ascii")
 
+                    attachments.append({
+                        "filename": f"{order_reference}.pdf",
+                        "content": invoice_content,
+                    })
 
-                    admin_logo.add_header(
-                        "Content-Disposition",
-                        "inline",
-                        filename=
-                            "density-electronics-logo.png",
-                    )
-
-
-                    admin_message.attach(
-                        admin_logo
-                    )
-
-
-                # PDF
-                with open(
-                    invoice_file,
-                    "rb",
-                ) as invoice:
-
-                    admin_message.attach(
-
-                        f"{order_reference}.pdf",
-
-                        invoice.read(),
-
-                        "application/pdf",
-                    )
-
-
-                admin_message.send(
-                    fail_silently=False
+                resend_response = send_resend_email(
+                    to_email=admin_email,
+                    subject=admin_subject,
+                    text=admin_text,
+                    html=admin_html,
+                    attachments=attachments,
                 )
-
 
                 admin_email_sent = True
-
-
-                print(
-                    "DENSITY EMAIL SENT:",
-                    admin_email,
-                )
-
+                print("DENSITY EMAIL SENT VIA RESEND:", admin_email)
+                print("RESEND ADMIN RESPONSE:", resend_response)
 
             except Exception as admin_error:
-
-                admin_email_error = str(
-                    admin_error
-                )
-
-                print(
-                    "DENSITY EMAIL ERROR:",
-                    repr(admin_error),
-                )
-
+                admin_email_error = str(admin_error)
+                print("DENSITY RESEND EMAIL ERROR:", repr(admin_error))
 
         # -------------------------------------------------
         # DELETE TEMP PDF
