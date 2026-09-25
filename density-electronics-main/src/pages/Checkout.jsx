@@ -237,9 +237,10 @@ export default function Checkout() {
               data.user.first_name ||
               "",
 
-            // Always use the email from the authenticated login session.
-            // Do not use a previously saved/localStorage email here.
-            email: data.user.email || "",
+            email:
+              prev.email ||
+              data.user.email ||
+              "",
           }));
         }
       } catch (error) {
@@ -475,11 +476,7 @@ export default function Checkout() {
 
     navigate("/payment", {
       state: {
-        // Always pass the authenticated user's email to payment/order creation.
-        customer: {
-          ...formData,
-          email: data.user?.email || formData.email,
-        },
+        customer: formData,
         items: cartItems,
         total,
         shipping,
@@ -744,7 +741,6 @@ export default function Checkout() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                     readOnly
                     placeholder="purchasing@company.com"
                     className="w-full border border-gray-300 rounded-sm px-4 py-2.5 text-sm text-slate-900 font-medium focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors bg-white shadow-sm"
                   />

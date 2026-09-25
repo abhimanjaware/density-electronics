@@ -74,8 +74,9 @@ export default function Payment() {
         );
       }
 
-      // Backend receives INR and converts to Razorpay paise exactly once.
-      if (totalAmount < 1) {
+      const amountInPaise = Math.round(totalAmount * 100);
+
+      if (amountInPaise < 100) {
         throw new Error('Minimum payment amount is ₹1.');
       }
 
@@ -95,7 +96,7 @@ export default function Payment() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            amount: totalAmount,
+            amount: amountInPaise,
           }),
         }
       );
