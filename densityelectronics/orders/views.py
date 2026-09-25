@@ -162,10 +162,9 @@ def send_resend_email(to_email, subject, text, html, attachments=None):
     if not api_key:
         raise RuntimeError("RESEND_API_KEY is not configured")
 
-    from_email = os.getenv(
-        "RESEND_FROM_EMAIL",
-        "onboarding@resend.dev",
-    )
+    from_email = os.getenv("RESEND_FROM_EMAIL", "").strip()
+    if not from_email:
+        raise RuntimeError("RESEND_FROM_EMAIL is not configured")
 
     payload = {
         "from": from_email,
@@ -2730,7 +2729,7 @@ Support:
                 subject=email_subject,
                 text=email_text,
                 html=customer_email_html,
-                attachments=attachments,
+                attachments=[],
             )
 
             customer_email_sent = True
@@ -3277,7 +3276,7 @@ New order notification
                     subject=admin_subject,
                     text=admin_text,
                     html=admin_html,
-                    attachments=attachments,
+                    attachments=[],
                 )
 
                 admin_email_sent = True
@@ -4695,27 +4694,11 @@ Density Electronics
 """
 
 
-        resend_api_key = os.getenv("RESEND_API_KEY")
-
-        if not resend_api_key:
-            raise Exception(
-                "RESEND_API_KEY is not configured"
-            )
-
-        resend.api_key = resend_api_key
-
-        resend_from_email = os.getenv(
-            "RESEND_FROM_EMAIL",
-            "onboarding@resend.dev",
-        )
-
-        resend_response = resend.Emails.send(
-            {
-                "from": resend_from_email,
-                "to": [email],
-                "subject": subject,
-                "html": email_html,
-            }
+        resend_response = send_resend_email(
+            to_email=email,
+            subject=subject,
+            text=email_body,
+            html=email_html,
         )
 
         print(
@@ -5335,3 +5318,4 @@ def current_customer(request):
             },
         }
     )
+
