@@ -8,7 +8,6 @@ import re
 from decimal import Decimal, InvalidOperation
 
 import razorpay
-import resend
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -157,8 +156,13 @@ def get_support_email():
 # =========================================================
 
 def send_resend_email(to_email, subject, text, html, attachments=None):
-    """Send an email through Resend without using Django SMTP."""
-    api_key = os.getenv("RESEND_API_KEY")
+    """
+    Send an email through the Resend HTTP API.
+
+    This single helper is used by registration OTP and order emails so
+    every email uses the same verified Resend domain configuration.
+    """
+    api_key = os.getenv("RESEND_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("RESEND_API_KEY is not configured")
 
@@ -166,12 +170,16 @@ def send_resend_email(to_email, subject, text, html, attachments=None):
     if not from_email:
         raise RuntimeError("RESEND_FROM_EMAIL is not configured")
 
+    recipient = str(to_email or "").strip()
+    if not recipient:
+        raise RuntimeError("Recipient email is required")
+
     payload = {
         "from": from_email,
-        "to": [to_email],
-        "subject": subject,
-        "text": text,
-        "html": html,
+        "to": [recipient],
+        "subject": str(subject or "").strip(),
+        "text": text or "",
+        "html": html or "",
     }
 
     if attachments:
@@ -179,26 +187,30 @@ def send_resend_email(to_email, subject, text, html, attachments=None):
 
     request = urllib.request.Request(
         "https://api.resend.com/emails",
-        data=json.dumps(payload).encode("utf-8"),
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "DensityElectronics/1.0",
         },
         method="POST",
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=15) as response:
-            response_body = response.read().decode("utf-8")
+        with urllib.request.urlopen(request, timeout=30) as response:
+            response_body = response.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as error:
-        error_body = error.read().decode("utf-8", errors="replace")
+        error_body = error.read().decode("utf-8", errors="replace").strip()
         raise RuntimeError(
-            f"Resend HTTP {error.code}: {error_body}"
+            f"Resend HTTP {error.code}: {error_body or error.reason}"
         ) from error
     except urllib.error.URLError as error:
         raise RuntimeError(
             f"Resend connection error: {error.reason}"
         ) from error
+    except TimeoutError as error:
+        raise RuntimeError("Resend request timed out") from error
 
     try:
         return json.loads(response_body or "{}")
@@ -3276,7 +3288,7 @@ New order notification
                     subject=admin_subject,
                     text=admin_text,
                     html=admin_html,
-                    attachments=[],
+                    attachments=attachments,
                 )
 
                 admin_email_sent = True
