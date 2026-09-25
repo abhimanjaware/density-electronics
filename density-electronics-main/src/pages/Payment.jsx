@@ -79,6 +79,35 @@ export default function Payment() {
         throw new Error('Minimum payment amount is ₹1.');
       }
 
+      // Always use the email of the currently logged-in account.
+      const currentUserResponse = await fetch(
+        `${API_BASE_URL}/api/orders/current-user/`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
+
+      const currentUserData = await currentUserResponse.json();
+
+      if (
+        !currentUserResponse.ok ||
+        !currentUserData?.authenticated ||
+        !currentUserData?.user?.email
+      ) {
+        throw new Error(
+          'Your login session has expired. Please login again before payment.'
+        );
+      }
+
+      const loggedInEmail = currentUserData.user.email;
+
+      // Keep the payment/order customer email tied to the logged-in account.
+      order.customer = {
+        ...order.customer,
+        email: loggedInEmail,
+      };
+
       toast.loading(
         'Creating secure payment order...',
         {
