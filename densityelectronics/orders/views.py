@@ -2741,7 +2741,7 @@ Support:
                 subject=email_subject,
                 text=email_text,
                 html=customer_email_html,
-                attachments=[],
+                attachments=attachments,
             )
 
             customer_email_sent = True
@@ -3764,6 +3764,7 @@ def admin_order_dashboard(request):
 # ADMIN CUSTOMER MANAGEMENT
 # =========================================================
 
+@csrf_exempt
 def admin_customers(request):
 
     # -----------------------------------------------------
@@ -3951,7 +3952,7 @@ def admin_customers(request):
 
                 mobile=mobile or None,
 
-                password=password,
+                password=user.password,
 
                 is_logged_in=False,
             )
@@ -4183,7 +4184,9 @@ def admin_customer_detail(
 
             if password:
 
-                customer.password = password
+                customer.password = make_password(
+                    password
+                )
 
             customer.save()
 
