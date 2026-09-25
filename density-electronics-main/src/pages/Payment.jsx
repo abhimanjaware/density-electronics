@@ -74,7 +74,7 @@ export default function Payment() {
         );
       }
 
-      const amountInPaise = Math.round(totalAmount * 100);
+      const amountInPaise = Math.round(totalAmount);
 
       if (amountInPaise < 100) {
         throw new Error('Minimum payment amount is ₹1.');
