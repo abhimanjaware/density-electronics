@@ -65,7 +65,7 @@ export default function Login() {
       setLoading(true);
 
       const response = await fetch(
-        `${API_BASE_URL}/api/orders/login/`,
+        `${API_BASE_URL}/api/orders/customer-login/`,
         {
           method: "POST",
           headers: {
