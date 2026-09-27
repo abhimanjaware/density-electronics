@@ -47,14 +47,12 @@ urlpatterns = [
     # ADMIN - CUSTOMER MANAGEMENT
     # =====================================================
 
-    # View all customers + Create customer
     path(
         "admin-customers/",
         views.admin_customers,
         name="admin_customers"
     ),
 
-    # Update/Delete specific customer
     path(
         "admin-customers/<int:customer_id>/",
         views.admin_customer_detail,
@@ -72,14 +70,12 @@ urlpatterns = [
         name="customer_register"
     ),
 
-    # Send registration OTP
     path(
         "send-registration-otp/",
         views.send_registration_otp,
         name="send_registration_otp"
     ),
 
-    # Verify registration OTP
     path(
         "verify-registration-otp/",
         views.verify_registration_otp,
