@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "10.123.30.238",
     "densityelectronics.onrender.com",
+    "densityelectronics-1.onrender.com",
 ]
 
 
@@ -228,14 +229,13 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 # =========================================================
-# SESSION / CSRF COOKIE SETTINGS
+# SESSION / CSRF COOKIE SETTINGS (Updated for Cross-Site)
 # =========================================================
 
-
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 
 
